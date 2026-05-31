@@ -1,6 +1,6 @@
 {
   "name": "@trebired/logger-adapter",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Logger adapter for @trebired/logger-compatible calls with common logger and custom writer support.",
   "license": "MIT",
   "keywords": [

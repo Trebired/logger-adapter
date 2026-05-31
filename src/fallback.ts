@@ -14,4 +14,9 @@ function fallbackLogger(mode: LoggerAdapterFallback, level: "error" | "info" | "
   };
 }
 
-export { fallbackLogger };
+function fallbackLevel(level: "error" | "info" | "success" | "warn"): "error" | "info" | "warn" {
+  if (level === "success") return "info";
+  return level;
+}
+
+export { fallbackLevel, fallbackLogger };

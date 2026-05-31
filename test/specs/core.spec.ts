@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 
-import { resolveLogger } from "../../src/index.js";
+import { logPackageInitialized, resolveLogger } from "../../src/index.js";
 
 describe("@trebired/logger-adapter", () => {
   test("supports trebired-style level methods", () => {
@@ -175,5 +175,28 @@ describe("@trebired/logger-adapter", () => {
     }
 
     expect(infoRows).toEqual([]);
+  });
+
+  test("emits package initialization notices through success-compatible loggers", () => {
+    const rows: Array<{ group: string; level: string; message: string; metadata?: unknown }> = [];
+    logPackageInitialized({
+      logger: {
+        fail() {},
+        flush() {},
+        info() {},
+        warn() {},
+        success(group: string, message: string, metadata?: unknown) {
+          rows.push({ group, level: "success", message, metadata });
+        },
+      },
+      source: "@trebired/test",
+    });
+
+    expect(rows).toEqual([{
+      group: "logger.loader",
+      level: "success",
+      message: "@trebired/test initialized",
+      metadata: undefined,
+    }]);
   });
 });

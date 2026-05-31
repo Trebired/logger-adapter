@@ -1,4 +1,4 @@
-type LoggerAdapterLevel = "error" | "fail" | "info" | "warn";
+type LoggerAdapterLevel = "error" | "fail" | "info" | "success" | "warn";
 
 type LoggerAdapterLogMethod = (group: string, message: string, metadata?: unknown) => unknown;
 
@@ -27,6 +27,7 @@ type LoggerAdapterLogger = LoggerAdapterEventSink | {
   fatal?: LoggerAdapterGenericLogMethod;
   info?: LoggerAdapterLogMethod | LoggerAdapterGenericLogMethod;
   log?: LoggerAdapterGenericLogMethod;
+  success?: LoggerAdapterLogMethod | LoggerAdapterGenericLogMethod;
   warn?: LoggerAdapterLogMethod | LoggerAdapterGenericLogMethod;
   write?: LoggerAdapterGenericLogMethod;
 };

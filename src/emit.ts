@@ -24,7 +24,11 @@ function callLevelMethod(
   level: LoggerAdapterLevel,
   event: LoggerAdapterResolvedEvent,
 ): boolean {
-  const alias = level === "fail" ? "fatal" : level;
+  const alias = level === "fail"
+    ? "fatal"
+    : level === "success"
+      ? "info"
+      : level;
   const method = getLoggerMethod(source, level) || getLoggerMethod(source, alias);
   if (!method) return false;
 
