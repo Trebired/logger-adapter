@@ -193,7 +193,7 @@ describe("@trebired/logger-adapter", () => {
     });
 
     expect(rows).toEqual([{
-      group: "logger.loader",
+      group: "test.initialize",
       level: "success",
       message: "@trebired/test initialized",
       metadata: undefined,
