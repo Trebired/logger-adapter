@@ -4,7 +4,12 @@ import type {
 } from "./types.js";
 import { isPlainObject } from "./values.js";
 
-function buildLogEvent(level: LoggerAdapterLevel, group: string, message: string, metadata?: unknown): LoggerAdapterResolvedEvent {
+export function buildLogEvent(
+  level: LoggerAdapterLevel,
+  group: string,
+  message: string,
+  metadata?: unknown,
+): LoggerAdapterResolvedEvent {
   return metadata === undefined
     ? {
         group,
@@ -21,11 +26,11 @@ function buildLogEvent(level: LoggerAdapterLevel, group: string, message: string
       };
 }
 
-function formatLogMessage(group: string, message: string): string {
+export function formatLogMessage(group: string, message: string): string {
   return `[${group}] ${message}`;
 }
 
-function buildStructuredPayload(event: LoggerAdapterResolvedEvent): Record<string, unknown> {
+export function buildStructuredPayload(event: LoggerAdapterResolvedEvent): Record<string, unknown> {
   if (isPlainObject(event.metadata)) {
     return {
       group: event.group,
@@ -45,5 +50,3 @@ function buildStructuredPayload(event: LoggerAdapterResolvedEvent): Record<strin
         timestamp: event.timestamp,
       };
 }
-
-export { buildLogEvent, buildStructuredPayload, formatLogMessage };

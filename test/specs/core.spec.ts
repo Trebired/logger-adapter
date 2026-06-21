@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 
-import { logPackageInitialized, resolveLogger } from "../../src/index.js";
+import { logPackageInitialized, resolveLogger } from "#zphq3sccnajd";
 
 describe("@trebired/logger-adapter", () => {
   test("supports trebired-style level methods", () => {

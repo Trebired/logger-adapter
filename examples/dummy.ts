@@ -1,4 +1,4 @@
-import { resolveLogger } from "../src/index.js";
+import { resolveLogger } from "#zphq3sccnajd";
 
 function runTrebiredCompatibleDemo() {
   const log = resolveLogger({

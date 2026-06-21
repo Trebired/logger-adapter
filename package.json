@@ -29,10 +29,13 @@
   "imports": {
     "#03caofapq890": "./src/source.ts",
     "#0j5vxdr4vdjb": "./src/backend/utils/time.ts",
+    "#3n82xc28qnug": "./examples/dummy.ts",
     "#7y7xl1fr645a": "./src/package-init.ts",
     "#903rjwb52opy": "./src/types.ts",
     "#aus7fuq3sblr": "./src/values.ts",
     "#baraacncu5kl": "./src/default-logger.ts",
+    "#c4uj97r0j22s": "./test/specs/core.spec.ts",
+    "#copl2r2557io": "./tb.code-discipline.ts",
     "#g37d0m22fyfl": "./src/emit.ts",
     "#h7r5guzmkuvo": "./src/event.ts",
     "#oipspz25c7fv": "./src/resolve-logger.ts",
@@ -70,5 +73,5 @@
   },
   "type": "module",
   "types": "./dist/index.d.ts",
-  "version": "0.2.1"
+  "version": "0.2.2"
 }
