@@ -1,39 +1,22 @@
 {
-  "name": "@trebired/logger-adapter",
-  "version": "0.2.0",
-  "description": "Logger adapter for @trebired/logger-compatible calls with common logger and custom writer support.",
-  "license": "MIT",
-  "keywords": [
-    "logger",
-    "logging",
-    "adapter",
-    "node",
-    "bun"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/Trebired/logger-adapter"
-  },
   "bugs": {
     "url": "https://github.com/Trebired/logger-adapter/issues"
   },
-  "homepage": "https://github.com/Trebired/logger-adapter#readme",
-  "type": "module",
+  "description": "Logger adapter for @trebired/logger-compatible calls with common logger and custom writer support.",
+  "devDependencies": {
+    "@trebired/code-discipline": "^2.1.1",
+    "@types/bun": "^1.3.4",
+    "@types/node": "^24.10.1",
+    "typescript": "^6.0.2"
+  },
   "engines": {
-    "node": ">=18",
-    "bun": ">=1.0.0"
+    "bun": ">=1.0.0",
+    "node": ">=18"
   },
-  "private": false,
-  "publishConfig": {
-    "access": "public"
-  },
-  "packageManager": "bun@1.3.12",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
     }
   },
   "files": [
@@ -42,6 +25,42 @@
     "LICENSE",
     "README.md"
   ],
+  "homepage": "https://github.com/Trebired/logger-adapter#readme",
+  "imports": {
+    "#03caofapq890": "./src/source.ts",
+    "#0j5vxdr4vdjb": "./src/backend/utils/time.ts",
+    "#7y7xl1fr645a": "./src/package-init.ts",
+    "#903rjwb52opy": "./src/types.ts",
+    "#aus7fuq3sblr": "./src/values.ts",
+    "#baraacncu5kl": "./src/default-logger.ts",
+    "#g37d0m22fyfl": "./src/emit.ts",
+    "#h7r5guzmkuvo": "./src/event.ts",
+    "#oipspz25c7fv": "./src/resolve-logger.ts",
+    "#op66hzcikawq": "./src/fallback.ts",
+    "#st6at619ve18": "./src/backend/utils/normalize.ts",
+    "#v2rejz65wrp4": "./src/backend/utils/object.ts",
+    "#wq20zg0x2bl1": "./src/frontend/js/utils/text.ts",
+    "#zphq3sccnajd": "./src/index.ts"
+  },
+  "keywords": [
+    "logger",
+    "logging",
+    "adapter",
+    "node",
+    "bun"
+  ],
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "name": "@trebired/logger-adapter",
+  "packageManager": "bun@1.3.12",
+  "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Trebired/logger-adapter"
+  },
   "scripts": {
     "build": "rm -rf dist && tsc -p tsconfig.build.json",
     "demo": "bun run examples/dummy.ts",
@@ -49,9 +68,7 @@
     "test": "bun test",
     "typecheck": "tsc --noEmit"
   },
-  "devDependencies": {
-    "@types/bun": "^1.3.4",
-    "@types/node": "^24.10.1",
-    "typescript": "^6.0.2"
-  }
+  "type": "module",
+  "types": "./dist/index.d.ts",
+  "version": "0.2.1"
 }
