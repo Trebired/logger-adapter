@@ -44,6 +44,12 @@
       "#op66hzcikawq": [
         "./src/fallback.ts"
       ],
+      "#rptxlsejs4em": [
+        "./examples/dummy.ts"
+      ],
+      "#s7btz75ed300": [
+        "./test/specs/core.spec.ts"
+      ],
       "#st6at619ve18": [
         "./src/backend/utils/normalize.ts"
       ],

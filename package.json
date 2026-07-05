@@ -40,6 +40,8 @@
     "#h7r5guzmkuvo": "./src/event.ts",
     "#oipspz25c7fv": "./src/resolve-logger.ts",
     "#op66hzcikawq": "./src/fallback.ts",
+    "#rptxlsejs4em": "./examples/dummy.ts",
+    "#s7btz75ed300": "./test/specs/core.spec.ts",
     "#st6at619ve18": "./src/backend/utils/normalize.ts",
     "#v2rejz65wrp4": "./src/backend/utils/object.ts",
     "#wq20zg0x2bl1": "./src/frontend/js/utils/text.ts",
