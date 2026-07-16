@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.3
+
+- Updated `logPackageInitialized()` so `@trebired/*` sources emit package initialization notices under the `trebired.<package>.initialize` group root by default.
+
 ## 0.2.2
 
 - Enforced the package `tb.code-discipline.ts` policy across source, tests, and examples, including synced import aliases and normalized `tsconfig` path metadata.

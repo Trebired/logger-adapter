@@ -11,7 +11,11 @@ type LoggerAdapterInitializationOptions = LoggerAdapterResolveOptions & {
 function buildInitializationGroup(source: string, group?: string): string {
   const raw = String(group || "").trim() || String(source || "").trim();
   const normalized = raw.replace(/^@[^/]+\//, "").replace(/\.initialize$/, "");
-  return normalized ? `${normalized}.initialize` : "package.initialize";
+  const root = String(source || "").startsWith("@trebired/") ? "trebired" : "";
+  const scoped = root && normalized !== root && !normalized.startsWith(`${root}.`)
+    ? `${root}.${normalized}`
+    : normalized;
+  return scoped ? `${scoped}.initialize` : "package.initialize";
 }
 
 function logPackageInitialized(options: LoggerAdapterInitializationOptions): void {

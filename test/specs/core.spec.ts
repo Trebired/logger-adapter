@@ -192,7 +192,7 @@ test("emits package initialization notices through success-compatible loggers", 
   });
 
   expect(rows).toEqual([{
-    group: "test.initialize",
+    group: "trebired.test.initialize",
     level: "success",
     message: "@trebired/test initialized",
     metadata: undefined,
