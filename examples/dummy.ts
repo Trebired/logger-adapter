@@ -1,6 +1,6 @@
 import { resolveLogger } from "#zphq3sccnajd";
 
-function runTrebiredCompatibleDemo() {
+function runPackageCompatibleDemo() {
   const log = resolveLogger({
     logger: console as any,
     source: "logger-adapter-demo",
@@ -30,5 +30,5 @@ function runCustomShapeDemo() {
   process.stdout.write(`${JSON.stringify(rows, null, 2)}\n`);
 }
 
-runTrebiredCompatibleDemo();
+runPackageCompatibleDemo();
 runCustomShapeDemo();

@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.4
+
+- Removed package test suites and banned committed `*.spec.ts`/`*.spec.tsx` files through Code Discipline.
+- Added Code Discipline enforcement for hardcoded `trebired` strings outside package metadata.
+- Migrated Code Discipline to `.code-discipline/config.ts` with alias-map sync output.
+- Updated package-generated artifact ignores and internal package dependency ranges.
+
 ## 0.2.3
 
 - Updated `logPackageInitialized()` so `@trebired/*` sources emit package initialization notices under the `trebired.<package>.initialize` group root by default.

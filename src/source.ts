@@ -10,7 +10,7 @@ function getLoggerMethod(source: LoggerAdapterLogger | null | undefined, name: s
   return typeof value === "function" ? value as LoggerAdapterGenericLogMethod : null;
 }
 
-function looksLikeTrebiredLogger(source: LoggerAdapterLogger | null | undefined): boolean {
+function looksLikePackageLogger(source: LoggerAdapterLogger | null | undefined): boolean {
   return Boolean(
     getLoggerMethod(source, "fail")
       || getLoggerMethod(source, "group")
@@ -29,4 +29,4 @@ function looksLikeObjectFirstLevelLogger(source: LoggerAdapterLogger | null | un
   );
 }
 
-export { getLoggerMethod, looksLikeObjectFirstLevelLogger, looksLikeTrebiredLogger };
+export { getLoggerMethod, looksLikeObjectFirstLevelLogger, looksLikePackageLogger };

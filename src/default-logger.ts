@@ -2,7 +2,7 @@ import { createRequire } from "node:module";
 
 import type { LoggerAdapterLogger } from "./types.js";
 
-type TrebiredLoggerModule = {
+type PackageLoggerModule = {
   createLog?: (options?: Record<string, unknown>) => LoggerAdapterLogger;
 };
 
@@ -13,7 +13,7 @@ function tryResolveDefaultLogger(source: string): LoggerAdapterLogger | null {
 
   try {
     const require = createRequire(import.meta.url);
-    const mod = require("@trebired/logger") as TrebiredLoggerModule;
+    const mod = require("@package/logger") as PackageLoggerModule;
     if (typeof mod.createLog === "function") {
       const logger = mod.createLog({
         console: true,

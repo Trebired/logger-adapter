@@ -10,8 +10,9 @@ type LoggerAdapterInitializationOptions = LoggerAdapterResolveOptions & {
 
 function buildInitializationGroup(source: string, group?: string): string {
   const raw = String(group || "").trim() || String(source || "").trim();
-  const normalized = raw.replace(/^@[^/]+\//, "").replace(/\.initialize$/, "");
-  const root = String(source || "").startsWith("@trebired/") ? "trebired" : "";
+  const normalized = raw.replace(new RegExp("^@[^/]+/"), "").replace(new RegExp("\\.initialize$"), "");
+  const scopeMatch = new RegExp("^@([^/]+)/").exec(String(source || ""));
+  const root = scopeMatch ? scopeMatch[1] : "";
   const scoped = root && normalized !== root && !normalized.startsWith(`${root}.`)
     ? `${root}.${normalized}`
     : normalized;

@@ -1,5 +1,5 @@
 import { buildStructuredPayload, formatLogMessage } from "./event.js";
-import { getLoggerMethod, looksLikeObjectFirstLevelLogger, looksLikeTrebiredLogger } from "./source.js";
+import { getLoggerMethod, looksLikeObjectFirstLevelLogger, looksLikePackageLogger } from "./source.js";
 import type {
   LoggerAdapterLevel,
   LoggerAdapterLogger,
@@ -32,7 +32,7 @@ function callLevelMethod(
   const method = getLoggerMethod(source, level) || getLoggerMethod(source, alias);
   if (!method) return false;
 
-  if (looksLikeTrebiredLogger(source)) {
+  if (looksLikePackageLogger(source)) {
     method.call(source, event.group, event.message, event.metadata);
     return true;
   }

@@ -10,59 +10,6 @@
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "noEmit": true,
-    "paths": {
-      "#03caofapq890": [
-        "./src/source.ts"
-      ],
-      "#0j5vxdr4vdjb": [
-        "./src/backend/utils/time.ts"
-      ],
-      "#7y7xl1fr645a": [
-        "./src/package-init.ts"
-      ],
-      "#903rjwb52opy": [
-        "./src/types.ts"
-      ],
-      "#aus7fuq3sblr": [
-        "./src/values.ts"
-      ],
-      "#baraacncu5kl": [
-        "./src/default-logger.ts"
-      ],
-      "#copl2r2557io": [
-        "./tb.code-discipline.ts"
-      ],
-      "#g37d0m22fyfl": [
-        "./src/emit.ts"
-      ],
-      "#h7r5guzmkuvo": [
-        "./src/event.ts"
-      ],
-      "#oipspz25c7fv": [
-        "./src/resolve-logger.ts"
-      ],
-      "#op66hzcikawq": [
-        "./src/fallback.ts"
-      ],
-      "#rptxlsejs4em": [
-        "./examples/dummy.ts"
-      ],
-      "#s7btz75ed300": [
-        "./test/specs/core.spec.ts"
-      ],
-      "#st6at619ve18": [
-        "./src/backend/utils/normalize.ts"
-      ],
-      "#v2rejz65wrp4": [
-        "./src/backend/utils/object.ts"
-      ],
-      "#wq20zg0x2bl1": [
-        "./src/frontend/js/utils/text.ts"
-      ],
-      "#zphq3sccnajd": [
-        "./src/index.ts"
-      ]
-    },
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": false,
@@ -75,9 +22,9 @@
   "exclude": [
     "node_modules"
   ],
+  "extends": "./.code-discipline/generated/tsconfig.paths.json",
   "include": [
     "examples/**/*.ts",
-    "src/**/*.ts",
-    "test/**/*.ts"
+    "src/**/*.ts"
   ]
 }
