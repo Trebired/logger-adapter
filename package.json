@@ -1,18 +1,17 @@
 {
-  "bugs": {
-    "url": "https://github.com/Trebired/logger-adapter/issues"
-  },
+  "name": "@trebired/logger-adapter",
+  "version": "0.2.5",
   "description": "Logger adapter for @trebired/logger-compatible calls with common logger and custom writer support.",
-  "devDependencies": {
-    "@trebired/code-discipline": "^4.7.1",
-    "@types/bun": "^1.3.4",
-    "@types/node": "^24.10.1",
-    "typescript": "^6.0.2"
-  },
+  "type": "module",
+  "private": false,
+  "license": "MIT",
+  "packageManager": "bun@1.3.12",
   "engines": {
     "bun": ">=1.0.0",
     "node": ">=18"
   },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "import": "./dist/index.js",
@@ -25,7 +24,18 @@
     "LICENSE",
     "README.md"
   ],
-  "homepage": "https://github.com/Trebired/logger-adapter#readme",
+  "scripts": {
+    "build": "rm -rf dist && tsc -p tsconfig.build.json",
+    "demo": "bun run examples/dummy.ts",
+    "prepublishOnly": "bun run typecheck && bun run build",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@trebired/code-discipline": "^4.7.1",
+    "@types/bun": "^1.3.4",
+    "@types/node": "^24.10.1",
+    "typescript": "^6.0.2"
+  },
   "keywords": [
     "logger",
     "logging",
@@ -33,26 +43,15 @@
     "node",
     "bun"
   ],
-  "license": "MIT",
-  "main": "./dist/index.js",
-  "name": "@trebired/logger-adapter",
-  "packageManager": "bun@1.3.12",
-  "private": false,
-  "publishConfig": {
-    "access": "public"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/Trebired/logger-adapter"
   },
-  "scripts": {
-    "build": "rm -rf dist && tsc -p tsconfig.build.json",
-    "demo": "bun run examples/dummy.ts",
-    "prepublishOnly": "bun run typecheck && bun test && bun run build",
-    "test": "bun -e \"console.log(\\\"No tests configured.\\\")\"",
-    "typecheck": "tsc --noEmit"
+  "homepage": "https://github.com/Trebired/logger-adapter#readme",
+  "bugs": {
+    "url": "https://github.com/Trebired/logger-adapter/issues"
   },
-  "type": "module",
-  "types": "./dist/index.d.ts",
-  "version": "0.2.4"
+  "publishConfig": {
+    "access": "public"
+  }
 }
