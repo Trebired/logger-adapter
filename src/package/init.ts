@@ -1,8 +1,10 @@
-import { callEventSink, callLevelMethod } from "./emit.js";
-import { buildLogEvent } from "./event.js";
-import { fallbackLevel, fallbackLogger } from "./fallback.js";
-import { tryResolveDefaultLogger } from "./default-logger.js";
-import type { LoggerAdapterResolveOptions } from "./types.js";
+
+import { tryResolveDefaultLogger } from "#baraacncu5kl";
+import { callEventSink, callLevelMethod } from "#g37d0m22fyfl";
+import { buildLogEvent } from "#h7r5guzmkuvo";
+import { fallbackLevel, fallbackLogger } from "#op66hzcikawq";
+import type { LoggerAdapterResolveOptions } from "#903rjwb52opy";
+import { buildPackageLogGroup } from "#wp3l0xg0zcet";
 
 type LoggerAdapterInitializationOptions = LoggerAdapterResolveOptions & {
   group?: string;
@@ -16,7 +18,7 @@ function buildInitializationGroup(source: string, group?: string): string {
   const scoped = root && normalized !== root && !normalized.startsWith(`${root}.`)
     ? `${root}.${normalized}`
     : normalized;
-  return scoped ? `${scoped}.initialize` : "package.initialize";
+  return scoped ? `${scoped}.initialize` : buildPackageLogGroup("initialize");
 }
 
 function logPackageInitialized(options: LoggerAdapterInitializationOptions): void {

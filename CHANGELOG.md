@@ -1,6 +1,10 @@
 # Changelog
 
+## 0.2.6
+
 - Standardized package metadata ordering and contributing guidance around the Trebired writing style.
+- Added package-owned organization metadata and used it for fallback package-initialization groups.
+- Updated Code Discipline to the current package release.
 
 ## 0.2.5
 

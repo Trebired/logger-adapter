@@ -1,4 +1,3 @@
-export { logPackageInitialized } from "./package-init.js";
 export { resolveLogger } from "./resolve-logger.js";
 
 export type {

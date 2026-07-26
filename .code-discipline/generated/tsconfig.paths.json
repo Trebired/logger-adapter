@@ -10,9 +10,6 @@
       "#2jza27vayitl": [
         "../../examples/dummy.ts"
       ],
-      "#7y7xl1fr645a": [
-        "../../src/package-init.ts"
-      ],
       "#903rjwb52opy": [
         "../../src/types.ts"
       ],
@@ -21,6 +18,9 @@
       ],
       "#baraacncu5kl": [
         "../../src/default-logger.ts"
+      ],
+      "#fcoyul7ipnkx": [
+        "../../src/package/init.ts"
       ],
       "#g37d0m22fyfl": [
         "../../src/emit.ts"
@@ -39,6 +39,9 @@
       ],
       "#v2rejz65wrp4": [
         "../../src/backend/utils/object.ts"
+      ],
+      "#wp3l0xg0zcet": [
+        "../../src/package/metadata.ts"
       ],
       "#wq20zg0x2bl1": [
         "../../src/frontend/js/utils/text.ts"
