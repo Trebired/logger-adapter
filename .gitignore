@@ -12,3 +12,4 @@ coverage/
 .env
 .env.*
 !.env.example
+.code-discipline/generated/
