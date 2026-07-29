@@ -156,7 +156,3 @@ This package does not:
 - rotate files
 - keep retention rules
 - replace `@trebired/logger`
-
-## License
-
-Licensed under MIT. See [LICENSE](./LICENSE).
