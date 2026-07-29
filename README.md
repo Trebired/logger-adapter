@@ -26,41 +26,6 @@ It is not a logger by itself. It is a compatibility layer between:
 - code that wants to log with `info(group, message, metadata)`
 - the actual logger or sink you want to use at runtime
 
-## What It Is For
-
-Use this when:
-
-- your codebase wants one stable internal logging call shape
-- you want to support `@trebired/logger` directly
-- you also want to accept user-provided loggers such as `console`, pino-style loggers, sink functions, or custom writer callbacks
-- you want callers to define the exact final emitted log structure without changing your internal log calls
-
-In practice, it lets you keep code like this:
-
-```ts
-log.info("server", "started", { port: 3000 });
-```
-
-while still allowing the runtime output to become:
-
-- an `@trebired/logger` call
-- a pino-style object-first call
-- a single formatted console string
-- a custom object shape
-- an event callback payload
-
-## What It Does Not Do
-
-This package does not:
-
-- save logs to disk
-- manage log directories
-- rotate files
-- keep retention rules
-- replace `@trebired/logger`
-
-If you want actual log storage and Trebired's full logger runtime, use `@trebired/logger`. If you want compatibility with that calling style while adapting to other outputs, use `@trebired/logger-adapter`.
-
 ## Install
 
 Runtime support: Bun 1+.
@@ -96,7 +61,32 @@ type NormalizedLogger = {
 };
 ```
 
-## Supported Inputs
+## Concepts
+
+### What It Is For
+
+Use this when:
+
+- your codebase wants one stable internal logging call shape
+- you want to support `@trebired/logger` directly
+- you also want to accept user-provided loggers such as `console`, pino-style loggers, sink functions, or custom writer callbacks
+- you want callers to define the exact final emitted log structure without changing your internal log calls
+
+In practice, it lets you keep code like this:
+
+```ts
+log.info("server", "started", { port: 3000 });
+```
+
+while still allowing the runtime output to become:
+
+- an `@trebired/logger` call
+- a pino-style object-first call
+- a single formatted console string
+- a custom object shape
+- an event callback payload
+
+### Supported Inputs
 
 `resolveLogger()` accepts:
 
@@ -107,7 +97,7 @@ type NormalizedLogger = {
 - plain message-first logger methods
 - a custom writer through `adapter(logger, event)`
 
-## Exact Output Shape
+### Exact Output Shape
 
 If you want exact control over the emitted structure, pass both `logger` and `adapter`:
 
@@ -141,8 +131,32 @@ That lets you control:
 - metadata nesting
 - method routing
 
-## Notes
+## Runtime
+
+### Notes
 
 - `source` is only used when `@trebired/logger` is auto-created at runtime.
 - If `@trebired/logger` is not available, the adapter falls back according to the configured fallback mode.
 - `fail` maps to `fatal` automatically when the target logger uses that name instead.
+
+## Public API
+
+The package exposes the documented runtime functions, constants, and types through its package entrypoints.
+
+Entrypoints:
+
+- `@trebired/logger-adapter`
+
+## What It Does Not Do
+
+This package does not:
+
+- save logs to disk
+- manage log directories
+- rotate files
+- keep retention rules
+- replace `@trebired/logger`
+
+## License
+
+Licensed under MIT. See [LICENSE](./LICENSE).
