@@ -63,11 +63,13 @@ If you want actual log storage and Trebired's full logger runtime, use `@trebire
 
 ## Install
 
+Runtime support: Bun 1+.
+
 ```sh
-npm install @trebired/logger-adapter
+bun i @trebired/logger-adapter
 ```
 
-## Use
+## Quick Start
 
 ```ts
 import { resolveLogger } from "@trebired/logger-adapter";

@@ -13,3 +13,5 @@ coverage/
 .env.*
 !.env.example
 .code-discipline/generated/
+
+cd-report-*.txt
