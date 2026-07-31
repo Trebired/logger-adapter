@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.10
+
+- Fixed the restored `logPackageInitialized` export leaking an internal `#hash`-alias type import into its published `.d.ts`, which only resolves inside this repo's own `tsconfig.json` and broke typecheck for any external consumer. It now imports the type via a plain relative path instead, matching `resolve-logger.ts`'s existing convention.
+
 ## 0.2.9
 
 - Restored the `logPackageInitialized` export from the package root. It was silently dropped from `src/index.ts` in 0.2.6 (undocumented at the time), breaking every consumer that imports it directly, including `@trebired/bootstrap`, `@trebired/bundler`, `@trebired/code-server-kit`, and `@trebired/git-host`.
