@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.11
+
+- Added the `prepare-dist.mjs`/`verify-pack.mjs` pipeline every sibling package already had. This package's published `dist/` never had internal `#hash` aliases rewritten to relative imports, and nothing ran a real consumer smoke test against the packed tarball — the actual reason both the dropped export and the `.d.ts` alias leak went uncaught for as long as they did.
+
 ## 0.2.10
 
 - Fixed the restored `logPackageInitialized` export leaking an internal `#hash`-alias type import into its published `.d.ts`, which only resolves inside this repo's own `tsconfig.json` and broke typecheck for any external consumer. It now imports the type via a plain relative path instead, matching `resolve-logger.ts`'s existing convention.
