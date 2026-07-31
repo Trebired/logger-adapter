@@ -1,6 +1,6 @@
 {
   "name": "@trebired/logger-adapter",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "description": "Logger adapter for @trebired/logger-compatible calls with common logger and custom writer support.",
   "type": "module",
   "private": false,
@@ -30,10 +30,11 @@
     "README.md"
   ],
   "scripts": {
-    "build": "rm -rf dist && tsc -p tsconfig.build.json",
+    "build": "bun run prepare:generated && rm -rf dist && tsc -p tsconfig.build.json",
     "demo": "bun run examples/dummy.ts",
     "prepublishOnly": "bun run typecheck && bun run build",
-    "typecheck": "tsc --noEmit"
+    "prepare:generated": "bun ./scripts/build/generated/tsconfig.mjs",
+    "typecheck": "bun run prepare:generated && tsc --noEmit"
   },
   "devDependencies": {
     "@trebired/code-discipline": "^4.8.0",
