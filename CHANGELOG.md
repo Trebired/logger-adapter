@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.9
+
+- Restored the `logPackageInitialized` export from the package root. It was silently dropped from `src/index.ts` in 0.2.6 (undocumented at the time), breaking every consumer that imports it directly, including `@trebired/bootstrap`, `@trebired/bundler`, `@trebired/code-server-kit`, and `@trebired/git-host`.
+- Fixed a broken published-package build: a fresh checkout has no committed `.code-discipline/generated/` output, and nothing regenerated it before `typecheck`/`build`, so every internal `#hash` import failed to resolve. `typecheck` and `build` now run `prepare:generated` first.
+- Standardized package metadata (author field, config-driven organization name, dropped the Node engine constraint) and migrated `.code-discipline/config.ts` to `defineCodeDisciplineConfig`.
+- Normalized README structure and removed the license footer.
+- Updated the `@trebired/code-discipline` devDependency to 4.8.0.
+
 ## 0.2.6
 
 - Standardized package metadata ordering and contributing guidance around the Trebired writing style.
