@@ -2,10 +2,10 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
+import { existsSync, readdirSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
 
 const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const tempRoot = path.join(rootDir, ".tmp", "verify-pack");
-const npmCacheDir = path.join(tempRoot, "npm-cache");
 const packageJsonBackupPath = path.join(rootDir, ".tmp", "package.json.backup");
 const nodeTypesDir = path.join(rootDir, "node_modules", "@types", "node");
 const tscBin = path.join(rootDir, "node_modules", "typescript", "bin", "tsc");
@@ -27,34 +27,21 @@ async function main() {
 async function resetTempRoot() {
   await fs.rm(tempRoot, { force: true, recursive: true });
   await fs.mkdir(tempRoot, { recursive: true });
-  await fs.mkdir(npmCacheDir, { recursive: true });
 }
 
 function packPackage() {
-  const stdoutPath = path.join(tempRoot, "pack-output.json");
-
   try {
-    execFileSync("sh", ["-lc", `npm pack --json > ${shellEscape(stdoutPath)}`], {
-      ...createNpmOptions(rootDir),
-      stdio: ["ignore", "inherit", "inherit"],
+    const stdout = execFileSync("bun", ["pm", "pack", "--quiet", "--destination", tempRoot], {
+      cwd: rootDir,
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "inherit"],
     });
+    return resolvePackedTarballPath(stdout);
   }
   catch (error) {
     restorePackageJsonFromBackup();
     throw error;
   }
-
-  const stdout = execFileSync("cat", [stdoutPath], {
-    encoding: "utf8",
-    stdio: ["ignore", "pipe", "inherit"],
-  });
-  const [entry] = JSON.parse(stdout);
-
-  if (!entry?.filename) {
-    throw new Error("npm pack did not return a tarball filename.");
-  }
-
-  return path.join(rootDir, entry.filename);
 }
 
 function listTarEntries(tarballPath) {
@@ -138,11 +125,31 @@ function normalizePackagePath(packagePath) {
   return `package/${String(packagePath).replace(/^\.\//u, "")}`;
 }
 
+function resolvePackedTarballPath(stdout) {
+  const printed = String(stdout || "").trim().split(/\r?\n/u).pop() || "";
+  const candidates = [
+    path.resolve(rootDir, printed),
+    path.resolve(tempRoot, printed),
+  ];
+  const resolved = candidates.find((candidate) => existsSync(candidate)) ?? findPackedTarball();
+  if (!resolved) throw new Error("bun pm pack did not return a tarball filename.");
+  return resolved;
+}
+
+function findPackedTarball() {
+  return readdirSync(tempRoot)
+    .filter((entry) => entry.endsWith(".tgz"))
+    .map((entry) => path.join(tempRoot, entry))
+    .sort()
+    .at(0);
+}
+
 async function runConsumerSmokeTest(tarballPath) {
   const consumerDir = path.join(tempRoot, "consumer");
 
   await fs.mkdir(consumerDir, { recursive: true });
   await writeConsumerManifest(consumerDir, tarballPath);
+  await writeConsumerBrowserFixture(consumerDir);
   await writeConsumerTypecheckFixture(consumerDir);
   await writeConsumerRuntimeFixture(consumerDir);
   await writeConsumerTsconfig(consumerDir);
@@ -166,24 +173,49 @@ async function writeConsumerManifest(consumerDir, tarballPath) {
 async function writeConsumerTypecheckFixture(consumerDir) {
   await fs.writeFile(path.join(consumerDir, "index.ts"), [
     'import { logPackageInitialized, resolveLogger } from "@package/logger-adapter";',
+    'import { resolveLogger as resolveBrowserLogger } from "@package/logger-adapter/browser";',
     "",
     "const events: unknown[] = [];",
     'const logger = resolveLogger({ source: "pack.smoke", adapter: (_source, event) => { events.push(event); } });',
     'logger?.info("pack.smoke", "ready");',
     'logPackageInitialized({ source: "pack.smoke", adapter: (_source, event) => { events.push(event); } });',
+    'const browserLogger = resolveBrowserLogger({ source: "pack.browser", fallback: "noop" });',
+    'browserLogger.info("pack.browser", "ready");',
     "",
     "console.log(events.length);",
+  ].join("\n"));
+}
+
+async function writeConsumerBrowserFixture(consumerDir) {
+  await fs.writeFile(path.join(consumerDir, "browser-entry.mjs"), [
+    'import { logPackageInitialized, resolveLogger } from "@package/logger-adapter";',
+    "",
+    "const events = [];",
+    "globalThis.__tb_logger__ = (source) => ({",
+    "  info(group, message, metadata) { events.push({ group, message, metadata, source }); },",
+    "  warn(group, message, metadata) { events.push({ group, message, metadata, source }); },",
+    "  error(group, message, metadata) { events.push({ group, message, metadata, source }); },",
+    "  fail(group, message, metadata) { events.push({ group, message, metadata, source }); },",
+    "});",
+    'const logger = resolveLogger({ source: "pack.browser" });',
+    'logger.info("pack.browser", "ready");',
+    'logPackageInitialized({ source: "pack.browser" });',
+    "globalThis.__pack_browser_events__ = events;",
+    "",
   ].join("\n"));
 }
 
 async function writeConsumerRuntimeFixture(consumerDir) {
   await fs.writeFile(path.join(consumerDir, "runtime.mjs"), [
     'import { logPackageInitialized, resolveLogger } from "@package/logger-adapter";',
+    'import { resolveLogger as resolveBrowserLogger } from "@package/logger-adapter/browser";',
     "",
     "const events = [];",
     'const logger = resolveLogger({ source: "pack.runtime", adapter: (_source, event) => { events.push(event); } });',
     'logger?.info("pack.runtime", "ready");',
     'logPackageInitialized({ source: "pack.runtime", adapter: (_source, event) => { events.push(event); } });',
+    'const browserLogger = resolveBrowserLogger({ source: "pack.browser", fallback: "noop" });',
+    'browserLogger.info("pack.browser", "ready");',
     "",
     "console.log(events.length);",
   ].join("\n"));
@@ -204,48 +236,39 @@ async function writeConsumerTsconfig(consumerDir) {
 }
 
 function runConsumerChecks(consumerDir) {
-  execFileSync("npm", ["install", "--ignore-scripts"], {
-    ...createNpmOptions(consumerDir),
-    stdio: "inherit",
-  });
-
-  execFileSync(process.execPath, [tscBin, "-p", "tsconfig.json"], {
+  execFileSync("bun", ["install", "--ignore-scripts"], {
     cwd: consumerDir,
     stdio: "inherit",
   });
 
-  execFileSync("node", ["runtime.mjs"], {
+  execFileSync("bun", [tscBin, "-p", "tsconfig.json"], {
     cwd: consumerDir,
     stdio: "inherit",
   });
-}
 
-function createNpmOptions(cwd) {
-  return {
-    cwd,
-    env: {
-      ...process.env,
-      npm_config_cache: npmCacheDir,
-    },
-  };
+  execFileSync("bun", ["runtime.mjs"], {
+    cwd: consumerDir,
+    stdio: "inherit",
+  });
+
+  execFileSync("bun", ["build", "browser-entry.mjs", "--target=browser", "--outfile=browser-output.js"], {
+    cwd: consumerDir,
+    stdio: "inherit",
+  });
+
+  const browserOutput = execFileSync("cat", [path.join(consumerDir, "browser-output.js")], {
+    encoding: "utf8",
+    stdio: ["ignore", "pipe", "inherit"],
+  });
+  if (browserOutput.includes("node:module") || browserOutput.includes("createRequire")) {
+    throw new Error("Browser bundle contains Node-only default logger resolution.");
+  }
 }
 
 function restorePackageJsonFromBackup() {
-  try {
-    execFileSync("test", ["-f", packageJsonBackupPath], { cwd: rootDir, stdio: "ignore" });
-  }
-  catch {
-    return;
-  }
-
-  execFileSync("cp", [packageJsonBackupPath, path.join(rootDir, "package.json")], {
-    cwd: rootDir,
-    stdio: "ignore",
-  });
-}
-
-function shellEscape(value) {
-  return `'${String(value).replace(/'/gu, `'\\''`)}'`;
+  if (!existsSync(packageJsonBackupPath)) return;
+  writeFileSync(path.join(rootDir, "package.json"), readFileSync(packageJsonBackupPath, "utf8"));
+  unlinkSync(packageJsonBackupPath);
 }
 
 await main();

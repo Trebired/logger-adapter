@@ -1,10 +1,11 @@
-export { logPackageInitialized } from "./package/init.js";
+export { logPackageInitialized } from "./init.js";
+export { resolveBrowserGlobalLogger } from "./default-logger.js";
 export { resolveLogger } from "./resolve-logger.js";
 
 export type {
-  LoggerAdapterEvent,
   LoggerAdapterDefaultLogger,
   LoggerAdapterDefaultLoggerFactory,
+  LoggerAdapterEvent,
   LoggerAdapterFallback,
   LoggerAdapterGenericLogMethod,
   LoggerAdapterLevel,
@@ -15,4 +16,4 @@ export type {
   LoggerAdapterResolvedEvent,
   LoggerAdapterWriter,
   NormalizedLoggerAdapter,
-} from "./types.js";
+} from "#903rjwb52opy";

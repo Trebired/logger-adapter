@@ -4,6 +4,12 @@ All notable changes to `@trebired/logger-adapter` will be documented here.
 
 This project follows semantic versioning once published.
 
+## 0.3.0
+
+- Added a browser-safe adapter entrypoint and browser package condition so frontend bundles can use logger-adapter without pulling Node-only default logger resolution into browser code.
+- Added configurable default logger resolution, including browser global logger fallback support for callers that wire `@trebired/logger/browser`.
+- Added optional peer metadata for `@trebired/logger` and made the server default resolver try the public logger package as well as the internal package alias.
+
 ## 0.2.12
 
 - Updated Code Discipline configuration to the `imports` rule with dead import removal enabled.

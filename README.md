@@ -133,10 +133,28 @@ That lets you control:
 
 ## Runtime
 
+### Browser Runtime
+
+Browser bundles can import the package root through bundlers that honor the `browser` export condition, or import the browser subpath directly:
+
+```ts
+import { resolveLogger } from "@trebired/logger-adapter/browser";
+
+const log = resolveLogger({
+  logger: console,
+  source: "frontend.runtime",
+});
+
+log.info("frontend.runtime", "bound");
+```
+
+The browser entrypoint does not import Node-only modules and does not auto-create the full server logger. Trebired products that use `@trebired/logger/browser` can pass that logger through `logger`, pass a `defaultLogger` factory, or expose it as `globalThis.__tb_logger__` / `globalThis.tbLogger` before package runtime boot.
+
 ### Notes
 
 - `source` is only used when `@trebired/logger` is auto-created at runtime.
-- If `@trebired/logger` is not available, the adapter falls back according to the configured fallback mode.
+- If `@trebired/logger` is installed, the server entrypoint can auto-create a quiet console logger for the provided `source`; otherwise the adapter falls back according to the configured fallback mode.
+- Browser bundles do not auto-import `@trebired/logger/browser`. Pass a browser logger explicitly, pass `defaultLogger`, or expose one globally.
 - `fail` maps to `fatal` automatically when the target logger uses that name instead.
 
 ## Public API
@@ -146,6 +164,7 @@ The package exposes the documented runtime functions, constants, and types throu
 Entrypoints:
 
 - `@trebired/logger-adapter`
+- `@trebired/logger-adapter/browser`
 
 ## What It Does Not Do
 

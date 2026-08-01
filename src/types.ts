@@ -20,7 +20,7 @@ type LoggerAdapterWriter = (logger: unknown, event: LoggerAdapterResolvedEvent) 
 
 type LoggerAdapterEventSink = (event: LoggerAdapterEvent) => unknown;
 
-type LoggerAdapterLogger = LoggerAdapterEventSink | {
+type LoggerAdapterLoggerObject = {
   [key: string]: unknown;
   error?: LoggerAdapterLogMethod | LoggerAdapterGenericLogMethod;
   fail?: LoggerAdapterLogMethod | LoggerAdapterGenericLogMethod;
@@ -32,10 +32,17 @@ type LoggerAdapterLogger = LoggerAdapterEventSink | {
   write?: LoggerAdapterGenericLogMethod;
 };
 
+type LoggerAdapterLogger = LoggerAdapterEventSink | LoggerAdapterLoggerObject;
+
 type LoggerAdapterFallback = "console" | "noop";
+
+type LoggerAdapterDefaultLoggerFactory = (source: string) => LoggerAdapterLogger | null | undefined;
+
+type LoggerAdapterDefaultLogger = LoggerAdapterDefaultLoggerFactory | LoggerAdapterLoggerObject;
 
 type LoggerAdapterResolveOptions = {
   adapter?: LoggerAdapterWriter;
+  defaultLogger?: LoggerAdapterDefaultLogger | false;
   fallback?: LoggerAdapterFallback;
   logger?: LoggerAdapterLogger;
   source: string;
@@ -51,10 +58,13 @@ type NormalizedLoggerAdapter = {
 export type {
   LoggerAdapterEvent,
   LoggerAdapterEventSink,
+  LoggerAdapterDefaultLogger,
+  LoggerAdapterDefaultLoggerFactory,
   LoggerAdapterFallback,
   LoggerAdapterGenericLogMethod,
   LoggerAdapterLevel,
   LoggerAdapterLogger,
+  LoggerAdapterLoggerObject,
   LoggerAdapterLogMethod,
   LoggerAdapterResolveOptions,
   LoggerAdapterResolvedEvent,

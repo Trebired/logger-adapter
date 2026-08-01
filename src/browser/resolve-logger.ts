@@ -1,13 +1,13 @@
-import { callEventSink, callLevelMethod } from "./emit.js";
-import { buildLogEvent } from "./event.js";
-import { fallbackLogger } from "./fallback.js";
-import { resolveConfiguredDefaultLogger } from "./default-logger.js";
+import { callEventSink, callLevelMethod } from "#g37d0m22fyfl";
+import { buildLogEvent } from "#h7r5guzmkuvo";
+import { fallbackLogger } from "#op66hzcikawq";
 import type {
   LoggerAdapterLevel,
   LoggerAdapterLogMethod,
   LoggerAdapterResolveOptions,
   NormalizedLoggerAdapter,
-} from "./types.js";
+} from "#903rjwb52opy";
+import { resolveConfiguredBrowserDefaultLogger } from "./default-logger.js";
 
 function resolveLogMethod(
   options: LoggerAdapterResolveOptions,
@@ -16,7 +16,7 @@ function resolveLogMethod(
 ): LoggerAdapterLogMethod {
   const source = options.adapter
     ? options.logger
-    : options.logger ?? resolveConfiguredDefaultLogger(options.defaultLogger, options.source);
+    : options.logger ?? resolveConfiguredBrowserDefaultLogger(options.defaultLogger, options.source);
 
   return (group: string, message: string, metadata?: unknown) => {
     const event = buildLogEvent(level, group, message, metadata);
