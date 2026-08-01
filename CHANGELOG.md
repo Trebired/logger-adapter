@@ -1,5 +1,14 @@
 # Changelog
 
+All notable changes to `@trebired/logger-adapter` will be documented here.
+
+This project follows semantic versioning once published.
+
+## 0.2.12
+
+- Updated Code Discipline configuration to the `imports` rule with dead import removal enabled.
+- Updated logger-adapter package metadata fallback so package-owned logs stay under the organization root when package metadata is unavailable.
+
 ## 0.2.11
 
 - Added the `prepare-dist.mjs`/`verify-pack.mjs` pipeline every sibling package already had. This package's published `dist/` never had internal `#hash` aliases rewritten to relative imports, and nothing ran a real consumer smoke test against the packed tarball — the actual reason both the dropped export and the `.d.ts` alias leak went uncaught for as long as they did.
