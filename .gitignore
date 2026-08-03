@@ -12,7 +12,7 @@ coverage/
 .env
 .env.*
 !.env.example
-.code-discipline/generated/
+.trebired/code-discipline/generated/
 .tmp/
 
 cd-report-*.txt
