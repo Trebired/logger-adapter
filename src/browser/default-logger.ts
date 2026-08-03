@@ -1,13 +1,13 @@
 import type { LoggerAdapterDefaultLogger, LoggerAdapterLogger } from "#903rjwb52opy";
 
 type BrowserLoggerGlobal = typeof globalThis & {
-  __tb_logger__?: LoggerAdapterDefaultLogger;
-  tbLogger?: LoggerAdapterDefaultLogger;
+  __logger_adapter_logger__?: LoggerAdapterDefaultLogger;
+  loggerAdapterLogger?: LoggerAdapterDefaultLogger;
 };
 
 function resolveBrowserGlobalLogger(): LoggerAdapterDefaultLogger | undefined {
   const global = globalThis as BrowserLoggerGlobal;
-  return global.__tb_logger__ ?? global.tbLogger;
+  return global.__logger_adapter_logger__ ?? global.loggerAdapterLogger;
 }
 
 function resolveConfiguredBrowserDefaultLogger(

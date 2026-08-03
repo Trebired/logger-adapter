@@ -1,19 +1,28 @@
 import { createRequire } from "node:module";
 
+import { PACKAGE_NAME } from "./package/metadata.js";
 import type { LoggerAdapterDefaultLogger, LoggerAdapterLogger } from "./types.js";
 
 type PackageLoggerModule = {
   createLog?: (options?: Record<string, unknown>) => LoggerAdapterLogger;
 };
 
-const PUBLIC_LOGGER_PACKAGE = `@${String.fromCharCode(116, 114, 101, 98, 105, 114, 101, 100)}/logger`;
 const defaultLoggerCache = new Map<string, LoggerAdapterLogger | null>();
+
+function siblingPackageName(slug: string): string {
+  const scope = new RegExp("^@([^/]+)/").exec(PACKAGE_NAME)?.[1];
+  return scope ? `@${scope}/${slug}` : slug;
+}
+
+function defaultLoggerPackageCandidates(): string[] {
+  return Array.from(new Set(["@package/logger", siblingPackageName("logger")]));
+}
 
 function tryResolveDefaultLogger(source: string): LoggerAdapterLogger | null {
   if (defaultLoggerCache.has(source)) return defaultLoggerCache.get(source) ?? null;
 
   const require = createRequire(import.meta.url);
-  for (const packageName of ["@package/logger", PUBLIC_LOGGER_PACKAGE]) {
+  for (const packageName of defaultLoggerPackageCandidates()) {
     try {
       const mod = require(packageName) as PackageLoggerModule;
       if (typeof mod.createLog !== "function") continue;
@@ -47,4 +56,4 @@ function resolveConfiguredDefaultLogger(
   return defaultLogger ?? tryResolveDefaultLogger(source);
 }
 
-export { resolveConfiguredDefaultLogger, tryResolveDefaultLogger };
+export { defaultLoggerPackageCandidates, resolveConfiguredDefaultLogger, tryResolveDefaultLogger };

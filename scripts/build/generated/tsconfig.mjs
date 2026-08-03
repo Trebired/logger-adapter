@@ -3,8 +3,19 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..");
-const importsDir = path.join(repoRoot, ".trebired/code-discipline", "imports");
-const generatedPath = path.join(repoRoot, ".trebired/code-discipline", "generated", "tsconfig.paths.json");
+const stateDir = await resolveStateDir();
+const importsDir = path.join(stateDir, "imports");
+const generatedPath = path.join(stateDir, "generated", "tsconfig.paths.json");
+
+async function resolveStateDir() {
+  const packageJsonPath = path.join(repoRoot, "package.json");
+  const packageJson = JSON.parse(await fs.readFile(packageJsonPath, "utf8"));
+  const organization = packageJson?.config?.organization?.name;
+  if (typeof organization !== "string" || !organization) {
+    throw new Error("package metadata is missing config.organization.name");
+  }
+  return path.join(repoRoot, `.${organization}`, "code-discipline");
+}
 
 function normalizeDotTarget(value) {
   const normalized = value.replaceAll(path.sep, path.posix.sep).replace(/^\.\/+/u, "").replace(/\/+/gu, "/");

@@ -5,7 +5,6 @@ import { fileURLToPath } from "node:url";
 const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const distDir = path.join(rootDir, "dist");
 const packageJsonPath = path.join(rootDir, "package.json");
-const aliasMapDir = path.join(rootDir, ".trebired/code-discipline", "imports");
 const tempDir = path.join(rootDir, ".tmp");
 const backupPath = path.join(tempDir, "package.json.backup");
 
@@ -44,6 +43,8 @@ async function prepareDist() {
       await fs.writeFile(filePath, rewritten);
     }
   }));
+
+  await makeBridgeEntrypointExecutable();
 }
 
 async function backupPackageJson() {
@@ -75,6 +76,7 @@ async function readAliasMap() {
   const aliases = {};
 
   try {
+    const aliasMapDir = await resolveAliasMapDir();
     const entries = await fs.readdir(aliasMapDir, { withFileTypes: true });
 
     for (const entry of entries) {
@@ -93,6 +95,15 @@ async function readAliasMap() {
   }
 
   return aliases;
+}
+
+async function resolveAliasMapDir() {
+  const packageJson = await readPackageJson();
+  const organization = packageJson?.config?.organization?.name;
+  if (typeof organization !== "string" || !organization) {
+    throw new Error("package metadata is missing config.organization.name");
+  }
+  return path.join(rootDir, `.${organization}`, "code-discipline", "imports");
 }
 
 async function promotePublicDistFiles() {
@@ -125,6 +136,15 @@ async function collectDistFiles() {
   }
 
   return files;
+}
+
+async function makeBridgeEntrypointExecutable() {
+  const bridgePath = path.join(distDir, "bridge", "server.js");
+  try {
+    await fs.chmod(bridgePath, 0o755);
+  } catch (error) {
+    if (error?.code !== "ENOENT") throw error;
+  }
 }
 
 function rewriteAliasImports(source, filePath, importsMap) {

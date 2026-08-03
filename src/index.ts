@@ -11,6 +11,7 @@ export type {
   LoggerAdapterLogger,
   LoggerAdapterLoggerObject,
   LoggerAdapterLogMethod,
+  LoggerAdapterNormalizedLogMethod,
   LoggerAdapterResolveOptions,
   LoggerAdapterResolvedEvent,
   LoggerAdapterWriter,

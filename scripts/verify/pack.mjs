@@ -4,7 +4,7 @@ import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { existsSync, readdirSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
 
-const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const tempRoot = path.join(rootDir, ".tmp", "verify-pack");
 const packageJsonBackupPath = path.join(rootDir, ".tmp", "package.json.backup");
 const nodeTypesDir = path.join(rootDir, "node_modules", "@types", "node");
@@ -19,6 +19,7 @@ async function main() {
 
   validatePackedEntrypoints(packedPackageJson, tarballEntries);
   validatePackedImports(packedPackageJson, tarballEntries);
+  validatePackedRustCrate(tarballEntries);
   await runConsumerSmokeTest(tarballPath);
 
   console.log("Pack verification succeeded.");
@@ -174,15 +175,18 @@ async function writeConsumerTypecheckFixture(consumerDir) {
   await fs.writeFile(path.join(consumerDir, "index.ts"), [
     'import { logPackageInitialized, resolveLogger } from "@package/logger-adapter";',
     'import { resolveLogger as resolveBrowserLogger } from "@package/logger-adapter/browser";',
+    'import type { LoggerBridgeCommand } from "@package/logger-adapter/bridge/protocol";',
     "",
     "const events: unknown[] = [];",
+    'const command: LoggerBridgeCommand = { type: "flush", id: "typecheck" };',
     'const logger = resolveLogger({ source: "pack.smoke", adapter: (_source, event) => { events.push(event); } });',
     'logger?.info("pack.smoke", "ready");',
+    'logger?.log("info", "pack.smoke", "recorded");',
     'logPackageInitialized({ source: "pack.smoke", adapter: (_source, event) => { events.push(event); } });',
     'const browserLogger = resolveBrowserLogger({ source: "pack.browser", fallback: "noop" });',
     'browserLogger.info("pack.browser", "ready");',
     "",
-    "console.log(events.length);",
+    "console.log(events.length, command.type);",
   ].join("\n"));
 }
 
@@ -191,7 +195,7 @@ async function writeConsumerBrowserFixture(consumerDir) {
     'import { logPackageInitialized, resolveLogger } from "@package/logger-adapter";',
     "",
     "const events = [];",
-    "globalThis.__tb_logger__ = (source) => ({",
+    "globalThis.__logger_adapter_logger__ = (source) => ({",
     "  info(group, message, metadata) { events.push({ group, message, metadata, source }); },",
     "  warn(group, message, metadata) { events.push({ group, message, metadata, source }); },",
     "  error(group, message, metadata) { events.push({ group, message, metadata, source }); },",
@@ -213,12 +217,33 @@ async function writeConsumerRuntimeFixture(consumerDir) {
     "const events = [];",
     'const logger = resolveLogger({ source: "pack.runtime", adapter: (_source, event) => { events.push(event); } });',
     'logger?.info("pack.runtime", "ready");',
+    'logger?.log("warn", "pack.runtime", "recorded", { count: 1 });',
     'logPackageInitialized({ source: "pack.runtime", adapter: (_source, event) => { events.push(event); } });',
     'const browserLogger = resolveBrowserLogger({ source: "pack.browser", fallback: "noop" });',
     'browserLogger.info("pack.browser", "ready");',
     "",
     "console.log(events.length);",
   ].join("\n"));
+}
+
+function validatePackedRustCrate(tarballEntries) {
+  for (const entry of [
+    "package/rust/logger-adapter/Cargo.toml",
+    "package/rust/logger-adapter/src/lib.rs",
+  ]) {
+    if (!tarballEntries.has(entry)) {
+      throw new Error(`Missing packed Rust crate file: ${entry}`);
+    }
+  }
+
+  for (const entry of tarballEntries) {
+    if (entry === "package/rust/logger-adapter/Cargo.lock") {
+      throw new Error("Packed Rust crate includes a generated Cargo.lock.");
+    }
+    if (entry.startsWith("package/rust/logger-adapter/target/")) {
+      throw new Error(`Packed Rust crate includes build output: ${entry}`);
+    }
+  }
 }
 
 async function writeConsumerTsconfig(consumerDir) {

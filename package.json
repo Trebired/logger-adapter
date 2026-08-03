@@ -1,7 +1,7 @@
 {
   "name": "@trebired/logger-adapter",
-  "version": "0.3.2",
-  "description": "Logger adapter for @trebired/logger-compatible server and browser calls with common logger and custom writer support.",
+  "version": "0.4.0",
+  "description": "Generic structured logger adapter with server, browser, bridge, and Rust client support.",
   "type": "module",
   "private": false,
   "license": "MIT",
@@ -17,6 +17,9 @@
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "bin": {
+    "logger-adapter-bridge": "./dist/bridge/server.js"
+  },
   "exports": {
     ".": {
       "browser": {
@@ -29,10 +32,19 @@
     "./browser": {
       "import": "./dist/browser/index.js",
       "types": "./dist/browser/index.d.ts"
+    },
+    "./bridge": {
+      "import": "./dist/bridge/server.js",
+      "types": "./dist/bridge/server.d.ts"
+    },
+    "./bridge/protocol": {
+      "import": "./dist/bridge/protocol.js",
+      "types": "./dist/bridge/protocol.d.ts"
     }
   },
   "files": [
     "dist",
+    "rust",
     "CHANGELOG.md",
     "LICENSE",
     "README.md"
@@ -40,12 +52,17 @@
   "scripts": {
     "build": "bun run prepare:generated && rm -rf dist && tsc -p tsconfig.build.json && bun ./scripts/prepare-dist.mjs prepare-dist",
     "demo": "bun run examples/dummy.ts",
-    "prepublishOnly": "bun run typecheck && bun run verify:pack",
+    "prepublishOnly": "bun run typecheck && bun run build && bun run verify:bridge && bun run verify:rust && bun run verify:pack",
     "prepare:generated": "bun ./scripts/build/generated/tsconfig.mjs",
     "typecheck": "bun run prepare:generated && tsc --noEmit",
     "prepack": "bun run build && bun ./scripts/prepare-dist.mjs prepack",
     "postpack": "bun ./scripts/prepare-dist.mjs postpack",
-    "verify:pack": "bun ./scripts/verify-pack.mjs"
+    "verify:bridge": "bun ./scripts/verify/bridge.mjs",
+    "verify:pack": "bun ./scripts/verify/pack.mjs",
+    "verify:rust": "bun ./scripts/verify/rust.mjs"
+  },
+  "dependencies": {
+    "@package/logger": "npm:@trebired/logger@^2.5.14"
   },
   "devDependencies": {
     "@trebired/code-discipline": "^4.10.1",

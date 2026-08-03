@@ -3,11 +3,11 @@ import { resolveLogger } from "#zphq3sccnajd";
 function runPackageCompatibleDemo() {
   const log = resolveLogger({
     logger: console as any,
-    source: "logger-adapter-demo",
+    source: "adapter-demo",
   });
 
-  log.info("server", "started", { port: 3000 });
-  log.warn("auth", "permission denied", { userId: "42" });
+  log.info("service.start", "started", { pid: process.pid });
+  log.warn("service.request", "slow", { durationMs: 1250 });
 }
 
 function runCustomShapeDemo() {
@@ -23,10 +23,10 @@ function runCustomShapeDemo() {
         extra: event.metadata,
       });
     },
-    source: "logger-adapter-demo",
+    source: "adapter-demo",
   });
 
-  log.fail("bootstrap", "missing-dir");
+  log.fail("service.config", "missing value");
   process.stdout.write(`${JSON.stringify(rows, null, 2)}\n`);
 }
 

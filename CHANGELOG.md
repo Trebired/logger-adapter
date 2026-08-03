@@ -1,76 +1,15 @@
 # Changelog
 
-All notable changes to `@trebired/logger-adapter` will be documented here.
-
 This project follows semantic versioning once published.
 
-## 0.3.2
+## 0.4.0
 
-- Refreshed package dependency ranges and lockfile state with `bun update` after adopting the `.trebired/code-discipline` structure.
+- Added a Bun JSONL bridge entrypoint for forwarding structured commands into the real JavaScript logger package.
+- Added bridge protocol types and validation helpers.
+- Added a Rust crate that manages bridge spawning, JSONL serialization, acknowledgements, flush, close, and error handling.
+- Added generic `log(level, group, message, metadata?)` support to the normalized TypeScript adapter.
+- Added bridge and Rust verification to the publish checks.
 
-## 0.3.1
+## Earlier Releases
 
-- Moved Code Discipline config, alias-map state, generated tsconfig paths, and reports to `.trebired/code-discipline/`.
-- Updated the `@trebired/code-discipline` devDependency to `^4.10.0`.
-
-## 0.3.0
-
-- Added a browser-safe adapter entrypoint and browser package condition so frontend bundles can use logger-adapter without pulling Node-only default logger resolution into browser code.
-- Added configurable default logger resolution, including browser global logger fallback support for callers that wire `@trebired/logger/browser`.
-- Added optional peer metadata for `@trebired/logger` and made the server default resolver try the public logger package as well as the internal package alias.
-
-## 0.2.12
-
-- Updated Code Discipline configuration to the `imports` rule with dead import removal enabled.
-- Updated logger-adapter package metadata fallback so package-owned logs stay under the organization root when package metadata is unavailable.
-
-## 0.2.11
-
-- Added the `prepare-dist.mjs`/`verify-pack.mjs` pipeline every sibling package already had. This package's published `dist/` never had internal `#hash` aliases rewritten to relative imports, and nothing ran a real consumer smoke test against the packed tarball — the actual reason both the dropped export and the `.d.ts` alias leak went uncaught for as long as they did.
-
-## 0.2.10
-
-- Fixed the restored `logPackageInitialized` export leaking an internal `#hash`-alias type import into its published `.d.ts`, which only resolves inside this repo's own `tsconfig.json` and broke typecheck for any external consumer. It now imports the type via a plain relative path instead, matching `resolve-logger.ts`'s existing convention.
-
-## 0.2.9
-
-- Restored the `logPackageInitialized` export from the package root. It was silently dropped from `src/index.ts` in 0.2.6 (undocumented at the time), breaking every consumer that imports it directly, including `@trebired/bootstrap`, `@trebired/bundler`, `@trebired/code-server-kit`, and `@trebired/git-host`.
-- Fixed a broken published-package build: a fresh checkout has no committed `.code-discipline/generated/` output, and nothing regenerated it before `typecheck`/`build`, so every internal `#hash` import failed to resolve. `typecheck` and `build` now run `prepare:generated` first.
-- Standardized package metadata (author field, config-driven organization name, dropped the Node engine constraint) and migrated `.code-discipline/config.ts` to `defineCodeDisciplineConfig`.
-- Normalized README structure and removed the license footer.
-- Updated the `@trebired/code-discipline` devDependency to 4.8.0.
-
-## 0.2.6
-
-- Standardized package metadata ordering and contributing guidance around the Trebired writing style.
-- Added package-owned organization metadata and used it for fallback package-initialization groups.
-- Updated Code Discipline to the current package release.
-
-## 0.2.5
-
-- Removed dead test scripts and stale test commands from publish workflows and maintainer docs.
-
-## 0.2.4
-
-- Removed package test suites and banned committed `*.spec.ts`/`*.spec.tsx` files through Code Discipline.
-- Added Code Discipline enforcement for hardcoded `trebired` strings outside package metadata.
-- Migrated Code Discipline to `.code-discipline/config.ts` with alias-map sync output.
-- Updated package-generated artifact ignores and internal package dependency ranges.
-
-## 0.2.3
-
-- Updated `logPackageInitialized()` so `@trebired/*` sources emit package initialization notices under the `trebired.<package>.initialize` group root by default.
-
-## 0.2.2
-
-- Enforced the package `tb.code-discipline.ts` policy across source, tests, and examples, including synced import aliases and normalized `tsconfig` path metadata.
-- Reduced small event-shaping duplication without changing the public adapter contract.
-
-## 0.2.0
-
-- Added `success`-level adapter support for startup and lifecycle notices.
-- Added `logPackageInitialized()` so Trebired packages can emit initialization notices through package-specific `.initialize` groups.
-
-## 0.1.0
-
-- Added shared logger adapter runtime for Trebired packages.
+Earlier releases provided the TypeScript server and browser adapter APIs.

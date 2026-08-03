@@ -4,6 +4,8 @@ node_modules/
 # Build output
 dist/
 coverage/
+rust/logger-adapter/Cargo.lock
+rust/logger-adapter/target/
 
 # Package artifacts
 *.tgz

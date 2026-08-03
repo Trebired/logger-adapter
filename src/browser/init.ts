@@ -8,18 +8,17 @@ type LoggerAdapterInitializationOptions = LoggerAdapterResolveOptions & {
   group?: string;
 };
 
-const DEFAULT_ORGANIZATION_NAME = String.fromCharCode(116, 114, 101, 98, 105, 114, 101, 100);
 const DEFAULT_PACKAGE_SLUG = "logger-adapter";
 
 function buildInitializationGroup(source: string, group?: string): string {
   const raw = String(group || "").trim() || String(source || "").trim();
   const normalized = raw.replace(new RegExp("^@[^/]+/"), "").replace(new RegExp("\\.initialize$"), "");
   const scopeMatch = new RegExp("^@([^/]+)/").exec(String(source || ""));
-  const root = scopeMatch ? scopeMatch[1] : DEFAULT_ORGANIZATION_NAME;
+  const root = scopeMatch ? scopeMatch[1] : "";
   const scoped = root && normalized !== root && !normalized.startsWith(`${root}.`)
     ? `${root}.${normalized}`
     : normalized;
-  return scoped ? `${scoped}.initialize` : `${DEFAULT_ORGANIZATION_NAME}.${DEFAULT_PACKAGE_SLUG}.initialize`;
+  return scoped ? `${scoped}.initialize` : `${DEFAULT_PACKAGE_SLUG}.initialize`;
 }
 
 function logPackageInitialized(options: LoggerAdapterInitializationOptions): void {

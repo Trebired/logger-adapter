@@ -40,6 +40,10 @@ function resolveLogger(options: LoggerAdapterResolveOptions): NormalizedLoggerAd
     warn: resolveLogMethod(options, "warn", fallbackLogger(fallbackMode, "warn")),
     error: resolveLogMethod(options, "error", fallbackLogger(fallbackMode, "error")),
     fail: resolveLogMethod(options, "fail", fallbackLogger(fallbackMode, "error")),
+    log(level, group, message, metadata) {
+      const fallbackLevel = level === "warn" ? "warn" : level === "error" || level === "fail" ? "error" : "info";
+      return resolveLogMethod(options, level, fallbackLogger(fallbackMode, fallbackLevel))(group, message, metadata);
+    },
   };
 }
 

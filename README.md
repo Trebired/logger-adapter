@@ -1,144 +1,55 @@
-# @trebired/logger-adapter
+# Logger Adapter
 
-Logger adapter for `@trebired/logger`-compatible calls.
-
-This package is for cases where you want to write logs in the `@trebired/logger` call style, but you do not want to require the final runtime logger to be `@trebired/logger`.
-
-It takes log calls written like `@trebired/logger`:
+Generic structured logger adapter for runtimes that use:
 
 ```ts
-log.info("group", "message", metadata);
-log.warn("group", "message", metadata);
-log.error("group", "message", metadata);
-log.fail("group", "message", metadata);
+log.info(group, message, metadata);
+log.warn(group, message, metadata);
+log.error(group, message, metadata);
+log.fail(group, message, metadata);
+log.log(level, group, message, metadata);
 ```
 
-and emits them through either:
-
-- `@trebired/logger`
-- common logger objects such as `console`, pino-style, or sink-style loggers
-- a caller-defined custom writer
-
-It does not manage log directories, file output, retention, or persistence.
-
-It is not a logger by itself. It is a compatibility layer between:
-
-- code that wants to log with `info(group, message, metadata)`
-- the actual logger or sink you want to use at runtime
+The JavaScript logger package remains the real logger. This adapter normalizes TypeScript logger inputs and also owns the JSONL bridge plus Rust client wrapper for native applications.
 
 ## Install
 
-Runtime support: Bun 1+.
-
 ```sh
-bun i @trebired/logger-adapter
+bun i <logger-adapter-package> <logger-package>
 ```
 
-## Quick Start
+The adapter resolves the logger package at runtime. Keep the logger package installed in applications that use the bridge.
+
+## TypeScript
 
 ```ts
-import { resolveLogger } from "@trebired/logger-adapter";
+import { resolveLogger } from "<logger-adapter-package>";
 
 const log = resolveLogger({
   logger: console,
-  source: "my-app",
+  source: "service",
 });
 
-log.info("server", "started", { port: 3000 });
-log.warn("auth", "permission denied", { userId: "42" });
+log.info("service.start", "started", { pid: process.pid });
+log.warn("service.request", "slow", { durationMs: 1250 });
+log.error("service.task", "failed", { recoverable: true });
+log.fail("service.shutdown", "stopped");
+log.log("audit", "service.event", "recorded", { count: 1 });
 ```
-
-That means your application code can always speak one logging dialect, while the adapter decides how that log should be delivered.
-
-The normalized logger always exposes:
-
-```ts
-type NormalizedLogger = {
-  info(group: string, message: string, metadata?: unknown): void;
-  warn(group: string, message: string, metadata?: unknown): void;
-  error(group: string, message: string, metadata?: unknown): void;
-  fail(group: string, message: string, metadata?: unknown): void;
-};
-```
-
-## Concepts
-
-### What It Is For
-
-Use this when:
-
-- your codebase wants one stable internal logging call shape
-- you want to support `@trebired/logger` directly
-- you also want to accept user-provided loggers such as `console`, pino-style loggers, sink functions, or custom writer callbacks
-- you want callers to define the exact final emitted log structure without changing your internal log calls
-
-In practice, it lets you keep code like this:
-
-```ts
-log.info("server", "started", { port: 3000 });
-```
-
-while still allowing the runtime output to become:
-
-- an `@trebired/logger` call
-- a pino-style object-first call
-- a single formatted console string
-- a custom object shape
-- an event callback payload
-
-### Supported Inputs
 
 `resolveLogger()` accepts:
 
-- a Trebired-style logger
-- an event sink function `(event) => void`
+- logger objects with level methods
+- event sink functions
 - sink objects with `write(event)` or `log(event)`
-- object-first loggers such as pino-style level methods
-- plain message-first logger methods
-- a custom writer through `adapter(logger, event)`
+- object-first logger APIs
+- message-first logger APIs
+- a custom `adapter(logger, event)` writer
 
-### Exact Output Shape
-
-If you want exact control over the emitted structure, pass both `logger` and `adapter`:
+## Browser
 
 ```ts
-import { resolveLogger } from "@trebired/logger-adapter";
-
-const rows: unknown[] = [];
-
-const log = resolveLogger({
-  logger: rows,
-  adapter(logger, event) {
-    (logger as unknown[]).push({
-      when: event.timestamp,
-      scope: event.group,
-      severity: event.level,
-      text: event.message,
-      extra: event.metadata,
-    });
-  },
-});
-
-log.info("server", "started", { port: 3000 });
-```
-
-That lets you control:
-
-- field names
-- field order
-- string vs object output
-- timestamp placement
-- metadata nesting
-- method routing
-
-## Runtime
-
-### Browser Runtime
-
-Browser bundles can import the package root through bundlers that honor the `browser` export condition, or import the browser subpath directly:
-
-```ts
-import { resolveLogger } from "@trebired/logger-adapter/browser";
+import { resolveLogger } from "<logger-adapter-package>/browser";
 
 const log = resolveLogger({
   logger: console,
@@ -148,30 +59,82 @@ const log = resolveLogger({
 log.info("frontend.runtime", "bound");
 ```
 
-The browser entrypoint does not import Node-only modules and does not auto-create the full server logger. Trebired products that use `@trebired/logger/browser` can pass that logger through `logger`, pass a `defaultLogger` factory, or expose it as `globalThis.__tb_logger__` / `globalThis.tbLogger` before package runtime boot.
+The browser entrypoint does not import Node-only modules and does not auto-create the server logger. Pass a browser logger explicitly, pass `defaultLogger`, or expose a factory as `globalThis.__logger_adapter_logger__` or `globalThis.loggerAdapterLogger`.
 
-### Notes
+## Bridge
 
-- `source` is only used when `@trebired/logger` is auto-created at runtime.
-- If `@trebired/logger` is installed, the server entrypoint can auto-create a quiet console logger for the provided `source`; otherwise the adapter falls back according to the configured fallback mode.
-- Browser bundles do not auto-import `@trebired/logger/browser`. Pass a browser logger explicitly, pass `defaultLogger`, or expose one globally.
-- `fail` maps to `fatal` automatically when the target logger uses that name instead.
+The bridge is a long-lived Bun process that reads newline-delimited JSON commands from stdin and writes JSON acknowledgements/errors to stdout. It forwards log events to the installed JavaScript logger package.
+
+```sh
+bunx <logger-adapter-bridge-bin>
+```
+
+Protocol examples:
+
+```json
+{"type":"configure","id":"1","logger":{"source":"native-app","dir":"/path/to/logs","save":true,"console":true}}
+{"type":"log","level":"info","group":"app.start","message":"started","metadata":{"pid":123},"timestamp":"2026-08-03T12:00:00.000Z"}
+{"type":"flush","id":"2"}
+{"type":"close","id":"3"}
+```
+
+Commands with an `id` receive either:
+
+```json
+{"type":"ack","ok":true,"command":"flush","id":"2"}
+```
+
+or:
+
+```json
+{"type":"error","ok":false,"command":"flush","id":"2","error":{"code":"command-failed","message":"..."}}
+```
+
+## Rust
+
+The package includes a Rust crate under `rust/logger-adapter`. Rust applications depend on that crate and let it manage the bridge process, JSONL protocol, acknowledgements, flushing, shutdown, and errors.
+
+```toml
+[dependencies]
+logger-adapter = { path = "node_modules/<logger-adapter-package>/rust/logger-adapter" }
+serde_json = "1"
+```
+
+```rust
+use logger_adapter::{LoggerAdapter, LoggerConfig};
+use serde_json::json;
+
+fn main() -> logger_adapter::Result<()> {
+    let config = LoggerConfig::new("native-app")
+        .dir("./logs")
+        .save(true)
+        .console(true);
+
+    let mut log = LoggerAdapter::builder(config).start()?;
+    log.info("app.start", "started", json!({ "pid": std::process::id() }))?;
+    log.warn("app.request", "slow", json!({ "duration_ms": 1250 }))?;
+    log.error("app.task", "failed", json!({ "recoverable": true }))?;
+    log.fail("app.shutdown", "stopped", serde_json::Value::Null)?;
+    log.log("audit", "app.event", "recorded", json!({ "count": 1 }))?;
+    log.flush()?;
+    log.close()?;
+    Ok(())
+}
+```
+
+The default Rust bridge path points to the built JavaScript bridge in the installed package. Override it with `LoggerAdapterBuilder::bridge_script(path)` when embedding the bridge elsewhere, and override the Bun executable with `LoggerAdapterBuilder::bun_executable(command)` when needed.
 
 ## Public API
 
-The package exposes the documented runtime functions, constants, and types through its package entrypoints.
-
 Entrypoints:
 
-- `@trebired/logger-adapter`
-- `@trebired/logger-adapter/browser`
+- package root
+- `/browser`
+- `/bridge`
+- `/bridge/protocol`
 
-## What It Does Not Do
+The normalized TypeScript logger exposes `info`, `warn`, `error`, `fail`, and `log`.
 
-This package does not:
+## Scope
 
-- save logs to disk
-- manage log directories
-- rotate files
-- keep retention rules
-- replace `@trebired/logger`
+This package adapts logger calls and owns the native bridge. It does not replace the JavaScript logger package, define retention policy, rotate files, or make application-specific logging decisions.

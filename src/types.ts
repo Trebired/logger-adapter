@@ -1,6 +1,12 @@
-type LoggerAdapterLevel = "error" | "fail" | "info" | "success" | "warn";
+type LoggerAdapterLevel = "error" | "fail" | "info" | "success" | "warn" | (string & {});
 
 type LoggerAdapterLogMethod = (group: string, message: string, metadata?: unknown) => unknown;
+type LoggerAdapterNormalizedLogMethod = (
+  level: LoggerAdapterLevel,
+  group: string,
+  message: string,
+  metadata?: unknown,
+) => unknown;
 
 type LoggerAdapterGenericLogMethod = (...args: unknown[]) => unknown;
 
@@ -52,6 +58,7 @@ type NormalizedLoggerAdapter = {
   error: LoggerAdapterLogMethod;
   fail: LoggerAdapterLogMethod;
   info: LoggerAdapterLogMethod;
+  log: LoggerAdapterNormalizedLogMethod;
   warn: LoggerAdapterLogMethod;
 };
 
@@ -66,6 +73,7 @@ export type {
   LoggerAdapterLogger,
   LoggerAdapterLoggerObject,
   LoggerAdapterLogMethod,
+  LoggerAdapterNormalizedLogMethod,
   LoggerAdapterResolveOptions,
   LoggerAdapterResolvedEvent,
   LoggerAdapterWriter,
