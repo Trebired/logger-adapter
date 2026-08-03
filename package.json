@@ -1,6 +1,6 @@
 {
   "name": "@trebired/logger-adapter",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Logger adapter for @trebired/logger-compatible server and browser calls with common logger and custom writer support.",
   "type": "module",
   "private": false,
@@ -48,10 +48,10 @@
     "verify:pack": "bun ./scripts/verify-pack.mjs"
   },
   "devDependencies": {
-    "@trebired/code-discipline": "^4.10.0",
-    "@types/bun": "^1.3.4",
-    "@types/node": "^24.10.1",
-    "typescript": "^6.0.2"
+    "@trebired/code-discipline": "^4.10.1",
+    "@types/bun": "^1.3.14",
+    "@types/node": "^24.13.3",
+    "typescript": "^6.0.3"
   },
   "peerDependencies": {
     "@trebired/logger": ">=2.5"
