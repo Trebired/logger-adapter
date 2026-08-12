@@ -11,19 +11,19 @@ export function buildLogEvent(
   metadata?: unknown,
 ): LoggerAdapterResolvedEvent {
   return metadata === undefined
-    ? {
-        group,
-        level,
-        message,
-        timestamp: new Date().toISOString(),
-      }
-    : {
-        group,
-        level,
-        message,
-        metadata,
-        timestamp: new Date().toISOString(),
-      };
+  ? {
+    group,
+    level,
+    message,
+    timestamp: new Date().toISOString(),
+  }
+  : {
+    group,
+    level,
+    message,
+    metadata,
+    timestamp: new Date().toISOString(),
+  };
 }
 
 export function formatLogMessage(group: string, message: string): string {
@@ -40,13 +40,13 @@ export function buildStructuredPayload(event: LoggerAdapterResolvedEvent): Recor
   }
 
   return event.metadata === undefined
-    ? {
-        group: event.group,
-        timestamp: event.timestamp,
-      }
-    : {
-        group: event.group,
-        metadata: event.metadata,
-        timestamp: event.timestamp,
-      };
+  ? {
+    group: event.group,
+    timestamp: event.timestamp,
+  }
+  : {
+    group: event.group,
+    metadata: event.metadata,
+    timestamp: event.timestamp,
+  };
 }

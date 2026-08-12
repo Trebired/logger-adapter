@@ -1,4 +1,4 @@
-type LoggerAdapterLevel = "error" | "fail" | "info" | "success" | "warn" | (string & {});
+type LoggerAdapterLevel = "error" | "fail" | "info" | "success" | "warn" | (string& {});
 
 type LoggerAdapterLogMethod = (group: string, message: string, metadata?: unknown) => unknown;
 type LoggerAdapterNormalizedLogMethod = (
@@ -18,7 +18,7 @@ type LoggerAdapterEvent = {
   timestamp?: string;
 };
 
-type LoggerAdapterResolvedEvent = LoggerAdapterEvent & {
+type LoggerAdapterResolvedEvent = LoggerAdapterEvent& {
   timestamp: string;
 };
 

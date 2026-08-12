@@ -4,7 +4,7 @@ import { fallbackLevel, fallbackLogger } from "#op66hzcikawq";
 import type { LoggerAdapterResolveOptions } from "#903rjwb52opy";
 import { resolveConfiguredBrowserDefaultLogger } from "./default-logger.js";
 
-type LoggerAdapterInitializationOptions = LoggerAdapterResolveOptions & {
+type LoggerAdapterInitializationOptions = LoggerAdapterResolveOptions& {
   group?: string;
 };
 
@@ -16,15 +16,15 @@ function buildInitializationGroup(source: string, group?: string): string {
   const scopeMatch = new RegExp("^@([^/]+)/").exec(String(source || ""));
   const root = scopeMatch ? scopeMatch[1] : "";
   const scoped = root && normalized !== root && !normalized.startsWith(`${root}.`)
-    ? `${root}.${normalized}`
-    : normalized;
+  ? `${root}.${normalized}`
+  : normalized;
   return scoped ? `${scoped}.initialize` : `${DEFAULT_PACKAGE_SLUG}.initialize`;
 }
 
 function logPackageInitialized(options: LoggerAdapterInitializationOptions): void {
   const source = options.adapter
-    ? options.logger
-    : options.logger ?? resolveConfiguredBrowserDefaultLogger(options.defaultLogger, options.source);
+  ? options.logger
+  : options.logger ?? resolveConfiguredBrowserDefaultLogger(options.defaultLogger, options.source);
   const group = buildInitializationGroup(options.source, options.group);
   const message = `${options.source} initialized`;
   const event = buildLogEvent("success", group, message);

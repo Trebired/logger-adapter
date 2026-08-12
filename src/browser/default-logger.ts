@@ -1,6 +1,6 @@
 import type { LoggerAdapterDefaultLogger, LoggerAdapterLogger } from "#903rjwb52opy";
 
-type BrowserLoggerGlobal = typeof globalThis & {
+type BrowserLoggerGlobal = typeof globalThis& {
   __logger_adapter_logger__?: LoggerAdapterDefaultLogger;
   loggerAdapterLogger?: LoggerAdapterDefaultLogger;
 };

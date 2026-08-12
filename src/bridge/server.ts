@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+
 import { createInterface } from "node:readline";
 import { inspect } from "node:util";
 
@@ -13,9 +14,9 @@ import {
   type LoggerBridgeResponse,
 } from "./protocol.js";
 
-type BridgeLogInstance = Record<string, unknown> & {
-  close?: () => Promise<void> | void;
-  flush?: () => Promise<void> | void;
+type BridgeLogInstance = Record<string, unknown>& {
+  close?: () => Promise<void>|void;
+  flush?: () => Promise<void>|void;
 };
 
 type BridgeLoggerModule = {
@@ -59,7 +60,7 @@ async function closeLogger(logger: BridgeLogInstance | null): Promise<void> {
   if (typeof logger?.flush === "function") await logger.flush();
 }
 
-async function configureLogger(state: BridgeState, command: Extract<LoggerBridgeCommand, { type: "configure" }>): Promise<void> {
+async function configureLogger(state: BridgeState, command: Extract<LoggerBridgeCommand, {type:"configure"}>): Promise<void> {
   await closeLogger(state.logger);
   const mod = await resolveLoggerModule();
   state.logger = mod.createLog?.(command.logger) ?? null;
@@ -125,8 +126,8 @@ async function handleLine(state: BridgeState, line: string): Promise<boolean> {
     parsed = JSON.parse(line);
   } catch (error) {
     writeResponse(createLoggerBridgeError({
-      code: "invalid-json",
-      message: error instanceof Error ? error.message : String(error),
+          code: "invalid-json",
+          message: error instanceof Error ? error.message : String(error),
     }));
     return true;
   }
@@ -136,8 +137,8 @@ async function handleLine(state: BridgeState, line: string): Promise<boolean> {
     command = parseLoggerBridgeCommand(parsed);
   } catch (error) {
     writeResponse(createLoggerBridgeError({
-      code: "invalid-command",
-      message: error instanceof Error ? error.message : String(error),
+          code: "invalid-command",
+          message: error instanceof Error ? error.message : String(error),
     }));
     return true;
   }
@@ -146,10 +147,10 @@ async function handleLine(state: BridgeState, line: string): Promise<boolean> {
     return await handleCommand(state, command);
   } catch (error) {
     writeResponse(createLoggerBridgeError({
-      code: command.type === "log" && !state.logger ? "logger-not-configured" : "command-failed",
-      command: command.type,
-      id: command.id,
-      message: error instanceof Error ? error.message : String(error),
+          code: command.type === "log" && !state.logger ? "logger-not-configured" : "command-failed",
+          command: command.type,
+          id: command.id,
+          message: error instanceof Error ? error.message : String(error),
     }));
     return true;
   }
@@ -159,8 +160,8 @@ async function runLoggerBridge(): Promise<void> {
   redirectConsoleToStderr();
   const state: BridgeState = { logger: null };
   const input = createInterface({
-    crlfDelay: Infinity,
-    input: process.stdin,
+      crlfDelay: Infinity,
+      input: process.stdin,
   });
 
   for await (const rawLine of input) {

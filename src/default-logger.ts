@@ -7,7 +7,7 @@ type PackageLoggerModule = {
   createLog?: (options?: Record<string, unknown>) => LoggerAdapterLogger;
 };
 
-const defaultLoggerCache = new Map<string, LoggerAdapterLogger | null>();
+const defaultLoggerCache = new Map<string, LoggerAdapterLogger|null>();
 
 function siblingPackageName(slug: string): string {
   const scope = new RegExp("^@([^/]+)/").exec(PACKAGE_NAME)?.[1];
@@ -27,10 +27,10 @@ function tryResolveDefaultLogger(source: string): LoggerAdapterLogger | null {
       const mod = require(packageName) as PackageLoggerModule;
       if (typeof mod.createLog !== "function") continue;
       const logger = mod.createLog({
-        console: true,
-        quiet: true,
-        save: false,
-        source,
+          console: true,
+          quiet: true,
+          save: false,
+          source,
       });
       defaultLoggerCache.set(source, logger);
       return logger;

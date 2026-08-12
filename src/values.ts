@@ -8,4 +8,8 @@ function isPlainObject(value: unknown): value is Record<string, unknown> {
   return proto === Object.prototype || proto === null;
 }
 
-export { isPlainObject, isRecord };
+function cleanString(value: unknown): string {
+  return typeof value === "string" ? value.trim() : "";
+}
+
+export { cleanString, isPlainObject, isRecord };

@@ -1,4 +1,3 @@
-
 import { resolveConfiguredDefaultLogger } from "#baraacncu5kl";
 import { callEventSink, callLevelMethod } from "#g37d0m22fyfl";
 import { buildLogEvent } from "#h7r5guzmkuvo";
@@ -6,7 +5,7 @@ import { fallbackLevel, fallbackLogger } from "#op66hzcikawq";
 import type { LoggerAdapterResolveOptions } from "#903rjwb52opy";
 import { buildPackageLogGroup, PACKAGE_ORGANIZATION_NAME } from "#wp3l0xg0zcet";
 
-type LoggerAdapterInitializationOptions = LoggerAdapterResolveOptions & {
+type LoggerAdapterInitializationOptions = LoggerAdapterResolveOptions& {
   group?: string;
 };
 
@@ -16,15 +15,15 @@ function buildInitializationGroup(source: string, group?: string): string {
   const scopeMatch = new RegExp("^@([^/]+)/").exec(String(source || ""));
   const root = scopeMatch ? scopeMatch[1] : PACKAGE_ORGANIZATION_NAME;
   const scoped = root && normalized !== root && !normalized.startsWith(`${root}.`)
-    ? `${root}.${normalized}`
-    : normalized;
+  ? `${root}.${normalized}`
+  : normalized;
   return scoped ? `${scoped}.initialize` : buildPackageLogGroup("initialize");
 }
 
 function logPackageInitialized(options: LoggerAdapterInitializationOptions): void {
   const source = options.adapter
-    ? options.logger
-    : options.logger ?? resolveConfiguredDefaultLogger(options.defaultLogger, options.source);
+  ? options.logger
+  : options.logger ?? resolveConfiguredDefaultLogger(options.defaultLogger, options.source);
   const group = buildInitializationGroup(options.source, options.group);
   const message = `${options.source} initialized`;
   const event = buildLogEvent("success", group, message);

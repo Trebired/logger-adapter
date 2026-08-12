@@ -1,3 +1,5 @@
+import { cleanString } from "#aus7fuq3sblr";
+
 type LoggerBridgeLevel = "error" | "fail" | "info" | "success" | "warn" | string;
 
 type LoggerBridgeLoggerConfig = {
@@ -36,10 +38,10 @@ type LoggerBridgeCloseCommand = {
 };
 
 type LoggerBridgeCommand =
-  | LoggerBridgeCloseCommand
-  | LoggerBridgeConfigureCommand
-  | LoggerBridgeFlushCommand
-  | LoggerBridgeLogCommand;
+|LoggerBridgeCloseCommand
+|LoggerBridgeConfigureCommand
+|LoggerBridgeFlushCommand
+|LoggerBridgeLogCommand;
 
 type LoggerBridgeAck = {
   command: LoggerBridgeCommand["type"];
@@ -65,18 +67,14 @@ function isBridgeRecord(value: unknown): value is Record<string, unknown> {
   return Boolean(value && typeof value === "object" && !Array.isArray(value));
 }
 
-function bridgeString(value: unknown): string {
-  return typeof value === "string" ? value.trim() : "";
-}
-
 function bridgeId(value: unknown): string | undefined {
-  const id = bridgeString(value);
+  const id = cleanString(value);
   return id || undefined;
 }
 
 function parseLoggerBridgeCommand(value: unknown): LoggerBridgeCommand {
   if (!isBridgeRecord(value)) throw new Error("command must be an object");
-  const type = bridgeString(value.type);
+  const type = cleanString(value.type);
   const id = bridgeId(value.id);
 
   if (type === "configure") {
@@ -89,13 +87,13 @@ function parseLoggerBridgeCommand(value: unknown): LoggerBridgeCommand {
   }
 
   if (type === "log") {
-    const level = bridgeString(value.level);
-    const group = bridgeString(value.group);
-    const message = bridgeString(value.message);
+    const level = cleanString(value.level);
+    const group = cleanString(value.group);
+    const message = cleanString(value.message);
     if (!level) throw new Error("log.level must be a non-empty string");
     if (!group) throw new Error("log.group must be a non-empty string");
     if (!message) throw new Error("log.message must be a non-empty string");
-    const timestamp = bridgeString(value.timestamp);
+    const timestamp = cleanString(value.timestamp);
     return {
       group,
       id,
@@ -124,10 +122,10 @@ function createLoggerBridgeAck(command: LoggerBridgeCommand["type"], id?: string
 }
 
 function createLoggerBridgeError(args: {
-  code: string;
-  command?: string;
-  id?: string;
-  message: string;
+    code: string;
+    command?: string;
+    id?: string;
+    message: string;
 }): LoggerBridgeError {
   return {
     ...(args.command ? { command: args.command } : {}),

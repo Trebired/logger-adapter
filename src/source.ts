@@ -13,10 +13,10 @@ function getLoggerMethod(source: LoggerAdapterLogger | null | undefined, name: s
 function looksLikePackageLogger(source: LoggerAdapterLogger | null | undefined): boolean {
   return Boolean(
     getLoggerMethod(source, "fail")
-      || getLoggerMethod(source, "group")
-      || getLoggerMethod(source, "withScope")
-      || getLoggerMethod(source, "flush")
-      || getLoggerMethod(source, "getStats"),
+    ||getLoggerMethod(source, "group")
+    ||getLoggerMethod(source, "withScope")
+    ||getLoggerMethod(source, "flush")
+    ||getLoggerMethod(source, "getStats"),
   );
 }
 
@@ -24,8 +24,8 @@ function looksLikeObjectFirstLevelLogger(source: LoggerAdapterLogger | null | un
   if (!isRecord(source)) return false;
   return Boolean(
     getLoggerMethod(source, "child")
-      || getLoggerMethod(source, "bindings")
-      || (source.levels && typeof source.levels === "object"),
+    ||getLoggerMethod(source, "bindings")
+    ||(source.levels && typeof source.levels === "object"),
   );
 }
 

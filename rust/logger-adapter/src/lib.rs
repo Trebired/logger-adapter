@@ -151,11 +151,11 @@ impl LoggerAdapter {
 
     pub fn start(builder: LoggerAdapterBuilder) -> Result<Self> {
         let mut child = Command::new(&builder.bun_executable)
-            .arg(&builder.bridge_script)
-            .stdin(Stdio::piped())
-            .stdout(Stdio::piped())
-            .stderr(Stdio::inherit())
-            .spawn()?;
+        .arg(&builder.bridge_script)
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::inherit())
+        .spawn()?;
 
         let stdin = child.stdin.take().ok_or(LoggerAdapterError::MissingPipe("stdin"))?;
         let stdout = child.stdout.take().ok_or(LoggerAdapterError::MissingPipe("stdout"))?;
@@ -190,18 +190,18 @@ impl LoggerAdapter {
         let metadata = serde_json::to_value(metadata)?;
         let command = if metadata.is_null() {
             json!({
-                "type": "log",
-                "level": level,
-                "group": group,
-                "message": message
+                    "type": "log",
+                    "level": level,
+                    "group": group,
+                    "message": message
             })
         } else {
             json!({
-                "type": "log",
-                "level": level,
-                "group": group,
-                "message": message,
-                "metadata": metadata
+                    "type": "log",
+                    "level": level,
+                    "group": group,
+                    "message": message,
+                    "metadata": metadata
             })
         };
         self.send(command)
@@ -260,15 +260,15 @@ impl LoggerAdapter {
             }
             let error = response.get("error").and_then(Value::as_object);
             let code = error
-                .and_then(|item| item.get("code"))
-                .and_then(Value::as_str)
-                .unwrap_or("bridge-error")
-                .to_string();
+            .and_then(|item| item.get("code"))
+            .and_then(Value::as_str)
+            .unwrap_or("bridge-error")
+            .to_string();
             let message = error
-                .and_then(|item| item.get("message"))
-                .and_then(Value::as_str)
-                .unwrap_or("command failed")
-                .to_string();
+            .and_then(|item| item.get("message"))
+            .and_then(Value::as_str)
+            .unwrap_or("command failed")
+            .to_string();
             return Err(LoggerAdapterError::BridgeError { code, message });
         }
     }
@@ -288,11 +288,11 @@ impl Drop for LoggerAdapter {
 
 fn default_bridge_script_path() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("..")
-        .join("..")
-        .join("dist")
-        .join("bridge")
-        .join("server.js")
+    .join("..")
+    .join("..")
+    .join("dist")
+    .join("bridge")
+    .join("server.js")
 }
 
 #[cfg(test)]
@@ -302,9 +302,9 @@ mod tests {
     #[test]
     fn config_serializes() {
         let config = LoggerConfig::new("native-app")
-            .console(false)
-            .save(false)
-            .quiet(true);
+        .console(false)
+        .save(false)
+        .quiet(true);
         let value = serde_json::to_value(config).unwrap();
         assert_eq!(value["source"], "native-app");
         assert_eq!(value["console"], false);
@@ -315,9 +315,9 @@ mod tests {
         let bridge_script = default_bridge_script_path();
         assert!(bridge_script.exists(), "bridge script must be built before running bridge tests");
         let logger = LoggerConfig::new("native-app")
-            .console(false)
-            .save(false)
-            .quiet(true);
+        .console(false)
+        .save(false)
+        .quiet(true);
         let mut log = LoggerAdapter::builder(logger).start().unwrap();
         log.info("app.start", "started", json!({ "pid": std::process::id() })).unwrap();
         log.warn("app.warn", "warning", json!({ "code": "sample" })).unwrap();

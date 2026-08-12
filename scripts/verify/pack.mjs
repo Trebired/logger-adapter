@@ -33,9 +33,9 @@ async function resetTempRoot() {
 function packPackage() {
   try {
     const stdout = execFileSync("bun", ["pm", "pack", "--quiet", "--destination", tempRoot], {
-      cwd: rootDir,
-      encoding: "utf8",
-      stdio: ["ignore", "pipe", "inherit"],
+        cwd: rootDir,
+        encoding: "utf8",
+        stdio: ["ignore", "pipe", "inherit"],
     });
     return resolvePackedTarballPath(stdout);
   }
@@ -47,8 +47,8 @@ function packPackage() {
 
 function listTarEntries(tarballPath) {
   const stdout = execFileSync("tar", ["-tf", tarballPath], {
-    encoding: "utf8",
-    stdio: ["ignore", "pipe", "inherit"],
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "inherit"],
   });
 
   return new Set(stdout.split("\n").map((entry) => entry.trim()).filter(Boolean));
@@ -56,8 +56,8 @@ function listTarEntries(tarballPath) {
 
 function readPackedPackageJson(tarballPath) {
   const stdout = execFileSync("tar", ["-xOf", tarballPath, "package/package.json"], {
-    encoding: "utf8",
-    stdio: ["ignore", "pipe", "inherit"],
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "inherit"],
   });
 
   return JSON.parse(stdout);
@@ -139,10 +139,10 @@ function resolvePackedTarballPath(stdout) {
 
 function findPackedTarball() {
   return readdirSync(tempRoot)
-    .filter((entry) => entry.endsWith(".tgz"))
-    .map((entry) => path.join(tempRoot, entry))
-    .sort()
-    .at(0);
+  .filter((entry) => entry.endsWith(".tgz"))
+  .map((entry) => path.join(tempRoot, entry))
+  .sort()
+  .at(0);
 }
 
 async function runConsumerSmokeTest(tarballPath) {
@@ -159,77 +159,77 @@ async function runConsumerSmokeTest(tarballPath) {
 
 async function writeConsumerManifest(consumerDir, tarballPath) {
   await fs.writeFile(path.join(consumerDir, "package.json"), JSON.stringify({
-    name: "logger-adapter-pack-smoke",
-    private: true,
-    type: "module",
-    dependencies: {
-      "@package/logger-adapter": `file:${tarballPath}`,
-    },
-    devDependencies: {
-      "@types/node": `file:${nodeTypesDir}`,
-    },
-  }, null, 2));
+        name: "logger-adapter-pack-smoke",
+        private: true,
+        type: "module",
+        dependencies: {
+          "@package/logger-adapter": `file:${tarballPath}`,
+        },
+        devDependencies: {
+          "@types/node": `file:${nodeTypesDir}`,
+        },
+      }, null, 2));
 }
 
 async function writeConsumerTypecheckFixture(consumerDir) {
   await fs.writeFile(path.join(consumerDir, "index.ts"), [
-    'import { logPackageInitialized, resolveLogger } from "@package/logger-adapter";',
-    'import { resolveLogger as resolveBrowserLogger } from "@package/logger-adapter/browser";',
-    'import type { LoggerBridgeCommand } from "@package/logger-adapter/bridge/protocol";',
-    "",
-    "const events: unknown[] = [];",
-    'const command: LoggerBridgeCommand = { type: "flush", id: "typecheck" };',
-    'const logger = resolveLogger({ source: "pack.smoke", adapter: (_source, event) => { events.push(event); } });',
-    'logger?.info("pack.smoke", "ready");',
-    'logger?.log("info", "pack.smoke", "recorded");',
-    'logPackageInitialized({ source: "pack.smoke", adapter: (_source, event) => { events.push(event); } });',
-    'const browserLogger = resolveBrowserLogger({ source: "pack.browser", fallback: "noop" });',
-    'browserLogger.info("pack.browser", "ready");',
-    "",
-    "console.log(events.length, command.type);",
-  ].join("\n"));
+      'import { logPackageInitialized, resolveLogger } from "@package/logger-adapter";',
+      'import { resolveLogger as resolveBrowserLogger } from "@package/logger-adapter/browser";',
+      'import type { LoggerBridgeCommand } from "@package/logger-adapter/bridge/protocol";',
+      "",
+      "const events: unknown[] = [];",
+      'const command: LoggerBridgeCommand = { type: "flush", id: "typecheck" };',
+      'const logger = resolveLogger({ source: "pack.smoke", adapter: (_source, event) => { events.push(event); } });',
+      'logger?.info("pack.smoke", "ready");',
+      'logger?.log("info", "pack.smoke", "recorded");',
+      'logPackageInitialized({ source: "pack.smoke", adapter: (_source, event) => { events.push(event); } });',
+      'const browserLogger = resolveBrowserLogger({ source: "pack.browser", fallback: "noop" });',
+      'browserLogger.info("pack.browser", "ready");',
+      "",
+      "console.log(events.length, command.type);",
+    ].join("\n"));
 }
 
 async function writeConsumerBrowserFixture(consumerDir) {
   await fs.writeFile(path.join(consumerDir, "browser-entry.mjs"), [
-    'import { logPackageInitialized, resolveLogger } from "@package/logger-adapter";',
-    "",
-    "const events = [];",
-    "globalThis.__logger_adapter_logger__ = (source) => ({",
-    "  info(group, message, metadata) { events.push({ group, message, metadata, source }); },",
-    "  warn(group, message, metadata) { events.push({ group, message, metadata, source }); },",
-    "  error(group, message, metadata) { events.push({ group, message, metadata, source }); },",
-    "  fail(group, message, metadata) { events.push({ group, message, metadata, source }); },",
-    "});",
-    'const logger = resolveLogger({ source: "pack.browser" });',
-    'logger.info("pack.browser", "ready");',
-    'logPackageInitialized({ source: "pack.browser" });',
-    "globalThis.__pack_browser_events__ = events;",
-    "",
-  ].join("\n"));
+      'import { logPackageInitialized, resolveLogger } from "@package/logger-adapter";',
+      "",
+      "const events = [];",
+      "globalThis.__logger_adapter_logger__ = (source) => ({",
+      "  info(group, message, metadata) { events.push({ group, message, metadata, source }); },",
+      "  warn(group, message, metadata) { events.push({ group, message, metadata, source }); },",
+      "  error(group, message, metadata) { events.push({ group, message, metadata, source }); },",
+      "  fail(group, message, metadata) { events.push({ group, message, metadata, source }); },",
+      "});",
+      'const logger = resolveLogger({ source: "pack.browser" });',
+      'logger.info("pack.browser", "ready");',
+      'logPackageInitialized({ source: "pack.browser" });',
+      "globalThis.__pack_browser_events__ = events;",
+      "",
+    ].join("\n"));
 }
 
 async function writeConsumerRuntimeFixture(consumerDir) {
   await fs.writeFile(path.join(consumerDir, "runtime.mjs"), [
-    'import { logPackageInitialized, resolveLogger } from "@package/logger-adapter";',
-    'import { resolveLogger as resolveBrowserLogger } from "@package/logger-adapter/browser";',
-    "",
-    "const events = [];",
-    'const logger = resolveLogger({ source: "pack.runtime", adapter: (_source, event) => { events.push(event); } });',
-    'logger?.info("pack.runtime", "ready");',
-    'logger?.log("warn", "pack.runtime", "recorded", { count: 1 });',
-    'logPackageInitialized({ source: "pack.runtime", adapter: (_source, event) => { events.push(event); } });',
-    'const browserLogger = resolveBrowserLogger({ source: "pack.browser", fallback: "noop" });',
-    'browserLogger.info("pack.browser", "ready");',
-    "",
-    "console.log(events.length);",
-  ].join("\n"));
+      'import { logPackageInitialized, resolveLogger } from "@package/logger-adapter";',
+      'import { resolveLogger as resolveBrowserLogger } from "@package/logger-adapter/browser";',
+      "",
+      "const events = [];",
+      'const logger = resolveLogger({ source: "pack.runtime", adapter: (_source, event) => { events.push(event); } });',
+      'logger?.info("pack.runtime", "ready");',
+      'logger?.log("warn", "pack.runtime", "recorded", { count: 1 });',
+      'logPackageInitialized({ source: "pack.runtime", adapter: (_source, event) => { events.push(event); } });',
+      'const browserLogger = resolveBrowserLogger({ source: "pack.browser", fallback: "noop" });',
+      'browserLogger.info("pack.browser", "ready");',
+      "",
+      "console.log(events.length);",
+    ].join("\n"));
 }
 
 function validatePackedRustCrate(tarballEntries) {
   for (const entry of [
-    "package/rust/logger-adapter/Cargo.toml",
-    "package/rust/logger-adapter/src/lib.rs",
+      "package/rust/logger-adapter/Cargo.toml",
+      "package/rust/logger-adapter/src/lib.rs",
   ]) {
     if (!tarballEntries.has(entry)) {
       throw new Error(`Missing packed Rust crate file: ${entry}`);
@@ -248,42 +248,42 @@ function validatePackedRustCrate(tarballEntries) {
 
 async function writeConsumerTsconfig(consumerDir) {
   await fs.writeFile(path.join(consumerDir, "tsconfig.json"), JSON.stringify({
-    compilerOptions: {
-      lib: ["ES2020"],
-      module: "ESNext",
-      moduleResolution: "Bundler",
-      noEmit: true,
-      target: "ES2020",
-      types: ["node"],
-    },
-    include: ["./index.ts"],
-  }, null, 2));
+        compilerOptions: {
+          lib: ["ES2020"],
+          module: "ESNext",
+          moduleResolution: "Bundler",
+          noEmit: true,
+          target: "ES2020",
+          types: ["node"],
+        },
+        include: ["./index.ts"],
+      }, null, 2));
 }
 
 function runConsumerChecks(consumerDir) {
   execFileSync("bun", ["install", "--ignore-scripts"], {
-    cwd: consumerDir,
-    stdio: "inherit",
+      cwd: consumerDir,
+      stdio: "inherit",
   });
 
   execFileSync("bun", [tscBin, "-p", "tsconfig.json"], {
-    cwd: consumerDir,
-    stdio: "inherit",
+      cwd: consumerDir,
+      stdio: "inherit",
   });
 
   execFileSync("bun", ["runtime.mjs"], {
-    cwd: consumerDir,
-    stdio: "inherit",
+      cwd: consumerDir,
+      stdio: "inherit",
   });
 
   execFileSync("bun", ["build", "browser-entry.mjs", "--target=browser", "--outfile=browser-output.js"], {
-    cwd: consumerDir,
-    stdio: "inherit",
+      cwd: consumerDir,
+      stdio: "inherit",
   });
 
   const browserOutput = execFileSync("cat", [path.join(consumerDir, "browser-output.js")], {
-    encoding: "utf8",
-    stdio: ["ignore", "pipe", "inherit"],
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "inherit"],
   });
   if (browserOutput.includes("node:module") || browserOutput.includes("createRequire")) {
     throw new Error("Browser bundle contains Node-only default logger resolution.");

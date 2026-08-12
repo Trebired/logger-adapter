@@ -12,8 +12,8 @@ const targetDir = path.join(rootDir, ".tmp", "rust-target");
 async function main() {
   try {
     execFileSync("cargo", ["test", "--manifest-path", manifestPath, "--target-dir", targetDir], {
-      cwd: rootDir,
-      stdio: "inherit",
+        cwd: rootDir,
+        stdio: "inherit",
     });
   }
   finally {

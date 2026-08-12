@@ -35,13 +35,13 @@ async function prepareDist() {
   await promotePublicDistFiles();
   const files = await collectDistFiles();
 
-  await Promise.all(files.map(async (filePath) => {
-    const original = await fs.readFile(filePath, "utf8");
-    const rewritten = rewriteAliasImports(original, filePath, aliasMap);
+  await Promise.all(files.map(async(filePath) => {
+        const original = await fs.readFile(filePath, "utf8");
+        const rewritten = rewriteAliasImports(original, filePath, aliasMap);
 
-    if (rewritten !== original) {
-      await fs.writeFile(filePath, rewritten);
-    }
+        if (rewritten !== original) {
+          await fs.writeFile(filePath, rewritten);
+        }
   }));
 
   await makeBridgeEntrypointExecutable();
@@ -108,8 +108,8 @@ async function resolveAliasMapDir() {
 
 async function promotePublicDistFiles() {
   await fs.cp(path.join(distDir, "src"), distDir, {
-    force: true,
-    recursive: true,
+      force: true,
+      recursive: true,
   });
 }
 
@@ -149,20 +149,20 @@ async function makeBridgeEntrypointExecutable() {
 
 function rewriteAliasImports(source, filePath, importsMap) {
   return source.replace(/(["'])(#[^"']+)\1/g, (match, quote, alias) => {
-    const target = importsMap[alias];
+      const target = importsMap[alias];
 
-    if (!target) {
-      return match;
-    }
+      if (!target) {
+        return match;
+      }
 
-    const compiledPath = resolveCompiledTarget(String(target));
+      const compiledPath = resolveCompiledTarget(String(target));
 
-    if (!compiledPath) {
-      return match;
-    }
+      if (!compiledPath) {
+        return match;
+      }
 
-    const relativePath = toRelativeImport(path.relative(path.dirname(filePath), compiledPath));
-    return `${quote}${relativePath}${quote}`;
+      const relativePath = toRelativeImport(path.relative(path.dirname(filePath), compiledPath));
+      return `${quote}${relativePath}${quote}`;
   });
 }
 

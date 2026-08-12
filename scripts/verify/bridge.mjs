@@ -20,25 +20,25 @@ async function verifyBridgeRoundTrip() {
   const logsDir = path.join(tempRoot, "logs");
   const bridge = startBridge();
   await bridge.send({
-    id: "1",
-    logger: {
-      console: false,
-      dir: logsDir,
-      quiet: true,
-      save: true,
-      source: "native-app",
-    },
-    type: "configure",
+      id: "1",
+      logger: {
+        console: false,
+        dir: logsDir,
+        quiet: true,
+        save: true,
+        source: "native-app",
+      },
+      type: "configure",
   });
   assert.equal((await bridge.read("1")).ok, true);
 
   await bridge.send({
-    group: "app.start",
-    level: "info",
-    message: "started",
-    metadata: { pid: process.pid },
-    timestamp: new Date(0).toISOString(),
-    type: "log",
+      group: "app.start",
+      level: "info",
+      message: "started",
+      metadata: { pid: process.pid },
+      timestamp: new Date(0).toISOString(),
+      type: "log",
   });
   await bridge.send({ id: "2", type: "flush" });
   assert.equal((await bridge.read("2")).ok, true);
@@ -77,8 +77,8 @@ function startBridge() {
 
 function createBridgeState() {
   const child = spawn("bun", [bridgePath], {
-    cwd: rootDir,
-    stdio: ["pipe", "pipe", "pipe"],
+      cwd: rootDir,
+      stdio: ["pipe", "pipe", "pipe"],
   });
 
   return {
@@ -94,17 +94,17 @@ function createBridgeState() {
 function attachBridgeStreams(state) {
   state.child.stdout.setEncoding("utf8");
   state.child.stdout.on("data", (chunk) => {
-    state.stdout += chunk;
-    drainPending(state);
+      state.stdout += chunk;
+      drainPending(state);
   });
   state.child.stderr.setEncoding("utf8");
   state.child.stderr.on("data", (chunk) => {
-    state.stderr += chunk;
+      state.stderr += chunk;
   });
   state.child.on("exit", (code) => {
-    state.exitCode = code;
-    state.exited = true;
-    drainPending(state);
+      state.exitCode = code;
+      state.exited = true;
+      drainPending(state);
   });
 }
 
@@ -147,22 +147,22 @@ function readBridgeResponse(state, id) {
   const response = takeResponse(state, id);
   if (response) return Promise.resolve(response);
   return new Promise((resolve, reject) => {
-    state.pending.push({ id, reject, resolve });
-    drainPending(state);
+      state.pending.push({ id, reject, resolve });
+      drainPending(state);
   });
 }
 
 function waitForBridgeExit(state) {
   if (state.exited) {
     return state.exitCode === 0 || state.exitCode === null
-      ? Promise.resolve()
-      : Promise.reject(new Error(`bridge exited with ${state.exitCode}: ${state.stderr}`));
+    ? Promise.resolve()
+    : Promise.reject(new Error(`bridge exited with ${state.exitCode}: ${state.stderr}`));
   }
   return new Promise((resolve, reject) => {
-    state.child.on("exit", (code) => {
-      if (code === 0 || code === null) resolve();
-      else reject(new Error(`bridge exited with ${code}: ${state.stderr}`));
-    });
+      state.child.on("exit", (code) => {
+          if (code === 0 || code === null) resolve();
+          else reject(new Error(`bridge exited with ${code}: ${state.stderr}`));
+      });
   });
 }
 

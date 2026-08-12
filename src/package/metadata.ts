@@ -2,6 +2,8 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { cleanString } from "#aus7fuq3sblr";
+
 type PackageJson = {
   config?: {
     organization?: {
@@ -37,10 +39,6 @@ function readPackageJson(): PackageJson {
   }
 }
 
-function cleanSegment(value: unknown): string {
-  return typeof value === "string" ? value.trim() : "";
-}
-
 function packageScope(name: string): string {
   return new RegExp("^@([^/]+)/").exec(name)?.[1] ?? "";
 }
@@ -50,17 +48,18 @@ function packageSlug(name: string): string {
 }
 
 const packageJson = readPackageJson();
-const PACKAGE_JSON_NAME = cleanSegment(packageJson.name);
-const PACKAGE_CONFIG_ORGANIZATION_NAME = cleanSegment(packageJson.config?.organization?.name);
-const PACKAGE_NAME = PACKAGE_JSON_NAME || (PACKAGE_CONFIG_ORGANIZATION_NAME ? `@${PACKAGE_CONFIG_ORGANIZATION_NAME}/logger-adapter` : "logger-adapter");
+const PACKAGE_JSON_NAME = cleanString(packageJson.name);
+const PACKAGE_CONFIG_ORGANIZATION_NAME = cleanString(packageJson.config?.organization?.name);
+const PACKAGE_NAME = PACKAGE_JSON_NAME || (PACKAGE_CONFIG_ORGANIZATION_NAME ? `@${PACKAGE_CONFIG_ORGANIZATION_NAME}/logger-adapter` : "logger-adapt" +
+  "er");
 const PACKAGE_ORGANIZATION_NAME = PACKAGE_CONFIG_ORGANIZATION_NAME || packageScope(PACKAGE_JSON_NAME);
 const PACKAGE_SLUG = packageSlug(PACKAGE_NAME) || "logger-adapter";
 
 function buildPackageLogGroup(...parts: string[]): string {
   return [PACKAGE_ORGANIZATION_NAME, PACKAGE_SLUG, ...parts]
-    .map((part) => part.trim())
-    .filter(Boolean)
-    .join(".");
+  .map((part) => part.trim())
+  .filter(Boolean)
+  .join(".");
 }
 
 export {
