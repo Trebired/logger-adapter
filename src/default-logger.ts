@@ -29,6 +29,7 @@ function tryResolveDefaultLogger(source: string): LoggerAdapterLogger | null {
       const logger = mod.createLog({
           console: true,
           quiet: true,
+          prefix: false,
           save: false,
           source,
       });

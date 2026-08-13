@@ -2,7 +2,7 @@ function cleanGroup(value: unknown): string {
   return String(value || "").trim().replace(new RegExp("^\\.+|\\.+$", "g"), "");
 }
 
-function applyGroupPrefix(group: string, prefix?: string): string {
+function applyGroupPrefix(group: string, prefix?: false | string): string {
   const normalizedGroup = cleanGroup(group);
   const normalizedPrefix = cleanGroup(prefix);
 
@@ -15,7 +15,7 @@ function applyGroupPrefix(group: string, prefix?: string): string {
   return `${normalizedPrefix}.${normalizedGroup}`;
 }
 
-function applyInitializationGroupPrefix(group: string | undefined, prefix?: string): string {
+function applyInitializationGroupPrefix(group: string | undefined, prefix?: false | string): string {
   const normalizedGroup = cleanGroup(group);
   const suffix = !normalizedGroup || normalizedGroup === "initialize"
   ? "initialize"
