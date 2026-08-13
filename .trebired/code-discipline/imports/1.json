@@ -11,6 +11,8 @@
   "#a7gp3lc9ei06": "./src/browser/resolve-logger.ts",
   "#aus7fuq3sblr": "./src/values.ts",
   "#baraacncu5kl": "./src/default-logger.ts",
+  "#bdzwd5cj4ola": "./scripts/verify/adapter.mjs",
+  "#br5q34hru3ot": "./src/group.ts",
   "#eaywjdf9s74m": "./scripts/verify/rust.mjs",
   "#fcoyul7ipnkx": "./src/package/init.ts",
   "#g37d0m22fyfl": "./src/emit.ts",

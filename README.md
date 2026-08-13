@@ -26,15 +26,16 @@ The adapter resolves the logger package at runtime. Keep the logger package inst
 import { resolveLogger } from "<logger-adapter-package>";
 
 const log = resolveLogger({
+  groupPrefix: "service",
   logger: console,
   source: "service",
 });
 
-log.info("service.start", "started", { pid: process.pid });
-log.warn("service.request", "slow", { durationMs: 1250 });
-log.error("service.task", "failed", { recoverable: true });
-log.fail("service.shutdown", "stopped");
-log.log("audit", "service.event", "recorded", { count: 1 });
+log.info("start", "started", { pid: process.pid });
+log.warn("request", "slow", { durationMs: 1250 });
+log.error("task", "failed", { recoverable: true });
+log.fail("shutdown", "stopped");
+log.log("audit", "event", "recorded", { count: 1 });
 ```
 
 `resolveLogger()` accepts:
@@ -45,6 +46,7 @@ log.log("audit", "service.event", "recorded", { count: 1 });
 - object-first logger APIs
 - message-first logger APIs
 - a custom `adapter(logger, event)` writer
+- `groupPrefix`, which prepends a package or app namespace to every group unless it is already present
 
 ## Browser
 
@@ -52,11 +54,12 @@ log.log("audit", "service.event", "recorded", { count: 1 });
 import { resolveLogger } from "<logger-adapter-package>/browser";
 
 const log = resolveLogger({
+  groupPrefix: "frontend.runtime",
   logger: console,
   source: "frontend.runtime",
 });
 
-log.info("frontend.runtime", "bound");
+log.info("bind", "bound");
 ```
 
 The browser entrypoint does not import Node-only modules and does not auto-create the server logger. Pass a browser logger explicitly, pass `defaultLogger`, or expose a factory as `globalThis.__logger_adapter_logger__` or `globalThis.loggerAdapterLogger`.

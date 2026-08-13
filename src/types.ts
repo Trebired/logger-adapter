@@ -50,6 +50,7 @@ type LoggerAdapterResolveOptions = {
   adapter?: LoggerAdapterWriter;
   defaultLogger?: LoggerAdapterDefaultLogger | false;
   fallback?: LoggerAdapterFallback;
+  groupPrefix?: string;
   logger?: LoggerAdapterLogger;
   source: string;
 };

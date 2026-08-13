@@ -1,6 +1,7 @@
 import { callEventSink, callLevelMethod } from "#g37d0m22fyfl";
 import { buildLogEvent } from "#h7r5guzmkuvo";
 import { fallbackLogger } from "#op66hzcikawq";
+import { applyGroupPrefix } from "#br5q34hru3ot";
 import type {
   LoggerAdapterDefaultLogger,
   LoggerAdapterLevel,
@@ -26,7 +27,8 @@ function createLoggerResolver(resolveDefaultLogger: DefaultLoggerResolver) {
     : options.logger ?? resolveDefaultLogger(options.defaultLogger, options.source);
 
     return (group: string, message: string, metadata?: unknown) => {
-      const event = buildLogEvent(level, group, message, metadata);
+      const resolvedGroup = applyGroupPrefix(group, options.groupPrefix);
+      const event = buildLogEvent(level, resolvedGroup, message, metadata);
 
       if (typeof options.adapter === "function") {
         options.adapter(source, event);
@@ -35,7 +37,7 @@ function createLoggerResolver(resolveDefaultLogger: DefaultLoggerResolver) {
 
       if (callLevelMethod(source, level, event)) return;
       if (callEventSink(source, event)) return;
-      fallback(group, message, metadata);
+      fallback(resolvedGroup, message, metadata);
     };
   }
 

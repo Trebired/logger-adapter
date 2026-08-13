@@ -1,6 +1,6 @@
 {
   "name": "@trebired/logger-adapter",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "description": "Generic structured logger adapter with server, browser, bridge, and Rust client support.",
   "type": "module",
   "private": false,
@@ -52,20 +52,21 @@
   "scripts": {
     "build": "bun run prepare:generated && rm -rf dist && tsc -p tsconfig.build.json && bun ./scripts/prepare-dist.mjs prepare-dist",
     "demo": "bun run examples/dummy.ts",
-    "prepublishOnly": "bun run typecheck && bun run build && bun run verify:bridge && bun run verify:rust && bun run verify:pack",
+    "prepublishOnly": "bun run typecheck && bun run build && bun run verify:adapter && bun run verify:bridge && bun run verify:rust && bun run verify:pack",
     "prepare:generated": "bun ./scripts/build/generated/tsconfig.mjs",
     "typecheck": "bun run prepare:generated && tsc --noEmit",
     "prepack": "bun run build && bun ./scripts/prepare-dist.mjs prepack",
     "postpack": "bun ./scripts/prepare-dist.mjs postpack",
+    "verify:adapter": "bun ./scripts/verify/adapter.mjs",
     "verify:bridge": "bun ./scripts/verify/bridge.mjs",
     "verify:pack": "bun ./scripts/verify/pack.mjs",
     "verify:rust": "bun ./scripts/verify/rust.mjs"
   },
   "dependencies": {
-    "@package/logger": "npm:@trebired/logger@^2.5.14"
+    "@package/logger": "npm:@trebired/logger@^2.5.19"
   },
   "devDependencies": {
-    "@trebired/code-discipline": "^6.0.9",
+    "@trebired/code-discipline": "^6.0.11",
     "@trebired/code-discipline-config": "^0.1.3",
     "@types/bun": "^1.3.14",
     "@types/node": "^24.13.3",

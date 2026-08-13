@@ -2,6 +2,11 @@
 
 This project follows semantic versioning once published.
 
+## 0.4.5
+
+- Added `groupPrefix` support to the server and browser logger resolvers.
+- Added prefixed package initialization logs without requiring packages to prefix each log call manually.
+
 ## 0.4.4
 
 - Adopted the external `@trebired/code-discipline-config` preset and updated Code Discipline tooling to `@trebired/code-discipline@^6.0.9`.
