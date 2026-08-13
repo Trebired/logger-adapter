@@ -2,6 +2,10 @@
 
 This project follows semantic versioning once published.
 
+## 0.4.7
+
+- Updated the internal logger alias dependency to `@trebired/logger@^2.5.22` so package logger configs load correctly under Node runtimes.
+
 ## 0.4.5
 
 - Added `groupPrefix` support to the server and browser logger resolvers.
