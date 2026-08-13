@@ -5,7 +5,7 @@
     "": {
       "name": "@trebired/logger-adapter",
       "dependencies": {
-        "@package/logger": "npm:@trebired/logger@^2.5.22",
+        "@package/logger": "npm:@trebired/logger@^2.5.24",
       },
       "devDependencies": {
         "@trebired/code-discipline": "^6.0.11",
@@ -15,7 +15,7 @@
         "typescript": "^6.0.3",
       },
       "peerDependencies": {
-        "@trebired/logger": ">=2.5.22",
+        "@trebired/logger": ">=2.5.24",
       },
       "optionalPeers": [
         "@trebired/logger",
@@ -23,7 +23,7 @@
     },
   },
   "packages": {
-    "@package/logger": ["@trebired/logger@2.5.22", "", { "dependencies": { "@package/result": "npm:@trebired/result@^1.1.6", "fflate": "^0.8.3", "tar-stream": "^3.2.0" }, "peerDependencies": { "react": ">=18" }, "optionalPeers": ["react"] }, "sha512-Grf+m2Y2oBPhVAaZCR8Chu5aIjGFaSEEEhmQuM3SlYCtzWvOd/EQ2wOASCckDrNvZ+KNn+/1xR1dq3YeuFW3Zg=="],
+    "@package/logger": ["@trebired/logger@2.5.24", "", { "dependencies": { "@package/result": "npm:@trebired/result@^1.1.6", "fflate": "^0.8.3", "tar-stream": "^3.2.0" }, "peerDependencies": { "react": ">=18" }, "optionalPeers": ["react"] }, "sha512-j1SQGRHPGSZKsMFWQGEkxHn99HNUulujC271e2GXTBkXKeBDws0bELv6ZoZgs3d1ioRVQGfRcyqgI8R4zhrxYw=="],
 
     "@package/logger-adapter": ["@trebired/logger-adapter@0.2.12", "", {}, "sha512-QW0DpI2Etscx5amJBs2H4qiFKTbZn+bzkUAdQsEL/dDmZVH9lO7uF0s27eXIiwP49lEAroPMAdla8B2tuOJTVA=="],
 

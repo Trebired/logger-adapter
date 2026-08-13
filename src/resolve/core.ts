@@ -16,7 +16,20 @@ type DefaultLoggerResolver = (
   source: string,
 ) => LoggerAdapterLogger | null;
 
-type GroupPrefixResolver = () => false | string;
+type GroupPrefixResolver = (options: LoggerAdapterResolveOptions) => false | string;
+
+function resolveGroupPrefix(
+  options: LoggerAdapterResolveOptions,
+  resolveConfiguredGroupPrefix: GroupPrefixResolver,
+): false | string {
+  if (Object.prototype.hasOwnProperty.call(options, "groupPrefix")) {
+    return options.groupPrefix === false
+    ? false
+    : applyGroupPrefix("", options.groupPrefix);
+  }
+
+  return resolveConfiguredGroupPrefix(options);
+}
 
 function createLoggerResolver(
   resolveDefaultLogger: DefaultLoggerResolver,
@@ -49,7 +62,7 @@ function createLoggerResolver(
 
   return (options: LoggerAdapterResolveOptions): NormalizedLoggerAdapter => {
     const fallbackMode = options.fallback ?? "console";
-    const groupPrefix = applyGroupPrefix(options.groupPrefix || "", resolveConfiguredGroupPrefix());
+    const groupPrefix = resolveGroupPrefix(options, resolveConfiguredGroupPrefix);
 
     return {
       info: resolveLogMethod(options, "info", fallbackLogger(fallbackMode, "info"), groupPrefix),

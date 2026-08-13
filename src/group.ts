@@ -25,4 +25,12 @@ function applyInitializationGroupPrefix(group: string | undefined, prefix?: fals
   return applyGroupPrefix(suffix, prefix);
 }
 
-export { applyGroupPrefix, applyInitializationGroupPrefix };
+function sourcePackagePrefix(source: unknown): false | string {
+  const raw = cleanGroup(source);
+  if (!raw) return false;
+  const scoped = new RegExp("^@([^/]+)/(.+)$", "u").exec(raw);
+  if (!scoped) return false;
+  return cleanGroup(`${scoped[1]}.${scoped[2]}`.replace(new RegExp("[/@]+", "g"), "."));
+}
+
+export { applyGroupPrefix, applyInitializationGroupPrefix, sourcePackagePrefix };

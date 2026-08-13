@@ -42,7 +42,6 @@ function verifyBrowserPrefix() {
   const capture = collectEvents();
   const logger = resolveBrowserLogger({
       fallback: "noop",
-      groupPrefix: "trebired.frontend",
       logger: capture.logger,
       source: "@trebired/frontend",
   });

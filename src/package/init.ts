@@ -10,7 +10,7 @@ type LoggerAdapterInitializationOptions = LoggerAdapterResolveOptions& {
   group?: string;
 };
 
-function buildInitializationGroup(source: string, group?: string, groupPrefix?: string): string {
+function buildInitializationGroup(source: string, group?: string, groupPrefix?: false | string): string {
   if (groupPrefix) return applyInitializationGroupPrefix(group, groupPrefix);
 
   const raw = String(group || "").trim() || String(source || "").trim();

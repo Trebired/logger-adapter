@@ -2,6 +2,10 @@
 
 This project follows semantic versioning once published.
 
+## 0.4.9
+
+- Added browser-side automatic package group prefixing from the package source so browser package logs keep the same ownership shape as server logs.
+
 ## 0.4.7
 
 - Updated the internal logger alias dependency to `@trebired/logger@^2.5.22` so package logger configs load correctly under Node runtimes.
