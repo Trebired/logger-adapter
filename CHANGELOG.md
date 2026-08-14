@@ -2,6 +2,10 @@
 
 This project follows semantic versioning once published.
 
+## 0.4.10
+
+- Updated the shared Trebired config dependency to `@trebired/configs@^0.1.2`.
+
 ## 0.4.9
 
 - Added browser-side automatic package group prefixing from the package source so browser package logs keep the same ownership shape as server logs.
@@ -17,7 +21,7 @@ This project follows semantic versioning once published.
 
 ## 0.4.4
 
-- Adopted the external `@trebired/code-discipline-config` preset and updated Code Discipline tooling to `@trebired/code-discipline@^6.0.9`.
+- Adopted the external `@trebired/configs` preset and updated Code Discipline tooling to `@trebired/code-discipline@^6.0.9`.
 
 ## 0.4.3
 
