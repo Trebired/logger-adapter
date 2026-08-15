@@ -2,6 +2,11 @@
 
 This project follows semantic versioning once published.
 
+## 0.4.12
+
+- Updated shared utilities to `@trebired/utils@^0.4.3`.
+- Replaced local value, object, time, and package metadata helpers with shared utilities.
+
 ## 0.4.10
 
 - Updated the shared Trebired config dependency to `@trebired/configs@^0.1.2`.

@@ -1,4 +1,4 @@
-import { cleanString } from "#aus7fuq3sblr";
+import { toTrimmedString as cleanString } from "@trebired/utils";
 
 type LoggerBridgeLevel = "error" | "fail" | "info" | "success" | "warn" | string;
 

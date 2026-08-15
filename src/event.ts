@@ -2,7 +2,7 @@ import type {
   LoggerAdapterLevel,
   LoggerAdapterResolvedEvent,
 } from "./types.js";
-import { isPlainObject } from "./values.js";
+import { isPlainObject } from "@trebired/utils";
 
 export function buildLogEvent(
   level: LoggerAdapterLevel,

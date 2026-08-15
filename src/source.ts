@@ -2,7 +2,7 @@ import type {
   LoggerAdapterGenericLogMethod,
   LoggerAdapterLogger,
 } from "./types.js";
-import { isRecord } from "./values.js";
+import { isRecord } from "@trebired/utils";
 
 function getLoggerMethod(source: LoggerAdapterLogger | null | undefined, name: string): LoggerAdapterGenericLogMethod | null {
   if (!isRecord(source)) return null;
@@ -22,10 +22,11 @@ function looksLikePackageLogger(source: LoggerAdapterLogger | null | undefined):
 
 function looksLikeObjectFirstLevelLogger(source: LoggerAdapterLogger | null | undefined): boolean {
   if (!isRecord(source)) return false;
+  const levels = source["levels"];
   return Boolean(
     getLoggerMethod(source, "child")
     ||getLoggerMethod(source, "bindings")
-    ||(source.levels && typeof source.levels === "object"),
+    ||(levels && typeof levels === "object"),
   );
 }
 

@@ -1,6 +1,5 @@
 {
   "#03caofapq890": "./src/source.ts",
-  "#0j5vxdr4vdjb": "./src/backend/utils/time.ts",
   "#0kcduaxjem5c": "./scripts/verify/bridge.mjs",
   "#2j7caofaaube": "./src/browser/init.ts",
   "#2jza27vayitl": "./examples/dummy.ts",
@@ -9,7 +8,6 @@
   "#7mxzrf089t73": "./src/bridge/server.ts",
   "#903rjwb52opy": "./src/types.ts",
   "#a7gp3lc9ei06": "./src/browser/resolve-logger.ts",
-  "#aus7fuq3sblr": "./src/values.ts",
   "#baraacncu5kl": "./src/default-logger.ts",
   "#bdzwd5cj4ola": "./scripts/verify/adapter.mjs",
   "#br5q34hru3ot": "./src/group.ts",
@@ -25,9 +23,7 @@
   "#mlfgwbpmizvo": "./src/config/caller.ts",
   "#op66hzcikawq": "./src/fallback.ts",
   "#ry1slsxwb0om": "./src/resolve/logger.ts",
-  "#st6at619ve18": "./src/backend/utils/normalize.ts",
   "#v2c2c77arc2r": "./.trebired/logger/config.ts",
-  "#v2rejz65wrp4": "./src/backend/utils/object.ts",
   "#wp3l0xg0zcet": "./src/package/metadata.ts",
   "#wq20zg0x2bl1": "./src/frontend/js/utils/text.ts",
   "#zphq3sccnajd": "./src/index.ts"
