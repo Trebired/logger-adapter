@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.4.13
+
+- Updated shared utilities to `@trebired/utils@^0.4.4`.
+- Updated direct logger dependency to `@trebired/logger@^2.5.28`.
+
 This project follows semantic versioning once published.
 
 ## 0.4.12
