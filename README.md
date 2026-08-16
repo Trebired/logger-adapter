@@ -1,29 +1,21 @@
-# Logger Adapter
+# @trebired/logger-adapter
 
-Generic structured logger adapter for runtimes that use:
+Generic adapter that normalizes logger calls across TypeScript, browser, bridge, and Rust runtimes.
 
-```ts
-log.info(group, message, metadata);
-log.warn(group, message, metadata);
-log.error(group, message, metadata);
-log.fail(group, message, metadata);
-log.log(level, group, message, metadata);
-```
-
-The JavaScript logger package remains the real logger. This adapter normalizes TypeScript logger inputs and also owns the JSONL bridge plus Rust client wrapper for native applications.
+This package owns logger input normalization, group prefix application, a JSONL bridge process, and the Rust client wrapper. Callers own logger storage, retention, transport policy, and application-specific log groups.
 
 ## Install
 
+Runtime support: Bun 1+.
+
 ```sh
-bun i <logger-adapter-package> <logger-package>
+bun i @trebired/logger-adapter @trebired/logger
 ```
 
-The adapter resolves the logger package at runtime. Keep the logger package installed in applications that use the bridge.
-
-## TypeScript
+## Quick Start
 
 ```ts
-import { resolveLogger } from "<logger-adapter-package>";
+import { resolveLogger } from "@trebired/logger-adapter";
 
 const log = resolveLogger({
   groupPrefix: "service",
@@ -31,113 +23,57 @@ const log = resolveLogger({
   source: "service",
 });
 
-log.info("start", "started", { pid: process.pid });
-log.warn("request", "slow", { durationMs: 1250 });
-log.error("task", "failed", { recoverable: true });
-log.fail("shutdown", "stopped");
-log.log("audit", "event", "recorded", { count: 1 });
+log.info("runtime", "started", { pid: process.pid });
 ```
 
-`resolveLogger()` accepts:
+## Concepts
 
-- logger objects with level methods
-- event sink functions
-- sink objects with `write(event)` or `log(event)`
-- object-first logger APIs
-- message-first logger APIs
-- a custom `adapter(logger, event)` writer
-- `groupPrefix`, which prepends a package or app namespace to every group unless it is already present
+### Adapter Model
 
-## Browser
+`resolveLogger()` accepts logger objects with level methods, event sink functions, sink objects, object-first logger APIs, message-first logger APIs, and custom adapter functions.
 
-```ts
-import { resolveLogger } from "<logger-adapter-package>/browser";
+### Browser Runtime
 
-const log = resolveLogger({
-  groupPrefix: "frontend.runtime",
-  logger: console,
-  source: "frontend.runtime",
-});
+The browser entrypoint avoids Node-only modules. Pass a browser logger explicitly, pass `defaultLogger`, or expose a factory on `globalThis`.
 
-log.info("bind", "bound");
-```
+### Bridge Runtime
 
-The browser entrypoint does not import Node-only modules and does not auto-create the server logger. Pass a browser logger explicitly, pass `defaultLogger`, or expose a factory as `globalThis.__logger_adapter_logger__` or `globalThis.loggerAdapterLogger`.
+The bridge is a long-lived Bun process that reads newline-delimited JSON commands from stdin, forwards log events to the installed JavaScript logger package, and writes acknowledgements or errors to stdout.
 
-## Bridge
+### Rust Runtime
 
-The bridge is a long-lived Bun process that reads newline-delimited JSON commands from stdin and writes JSON acknowledgements/errors to stdout. It forwards log events to the installed JavaScript logger package.
+The Rust crate under `rust/logger-adapter` manages the bridge process, JSONL protocol, acknowledgements, flushing, shutdown, and bridge errors for native callers.
 
-```sh
-bunx <logger-adapter-bridge-bin>
-```
+## Runtime
 
-Protocol examples:
+The package resolves the logger package at runtime. Applications that use the bridge keep `@trebired/logger` installed beside the adapter.
 
-```json
-{"type":"configure","id":"1","logger":{"source":"native-app","dir":"/path/to/logs","save":true,"console":true}}
-{"type":"log","level":"info","group":"app.start","message":"started","metadata":{"pid":123},"timestamp":"2026-08-03T12:00:00.000Z"}
-{"type":"flush","id":"2"}
-{"type":"close","id":"3"}
-```
-
-Commands with an `id` receive either:
-
-```json
-{"type":"ack","ok":true,"command":"flush","id":"2"}
-```
-
-or:
-
-```json
-{"type":"error","ok":false,"command":"flush","id":"2","error":{"code":"command-failed","message":"..."}}
-```
-
-## Rust
-
-The package includes a Rust crate under `rust/logger-adapter`. Rust applications depend on that crate and let it manage the bridge process, JSONL protocol, acknowledgements, flushing, shutdown, and errors.
-
-```toml
-[dependencies]
-logger-adapter = { path = "node_modules/<logger-adapter-package>/rust/logger-adapter" }
-serde_json = "1"
-```
-
-```rust
-use logger_adapter::{LoggerAdapter, LoggerConfig};
-use serde_json::json;
-
-fn main() -> logger_adapter::Result<()> {
-    let config = LoggerConfig::new("native-app")
-        .dir("./logs")
-        .save(true)
-        .console(true);
-
-    let mut log = LoggerAdapter::builder(config).start()?;
-    log.info("app.start", "started", json!({ "pid": std::process::id() }))?;
-    log.warn("app.request", "slow", json!({ "duration_ms": 1250 }))?;
-    log.error("app.task", "failed", json!({ "recoverable": true }))?;
-    log.fail("app.shutdown", "stopped", serde_json::Value::Null)?;
-    log.log("audit", "app.event", "recorded", json!({ "count": 1 }))?;
-    log.flush()?;
-    log.close()?;
-    Ok(())
-}
-```
-
-The default Rust bridge path points to the built JavaScript bridge in the installed package. Override it with `LoggerAdapterBuilder::bridge_script(path)` when embedding the bridge elsewhere, and override the Bun executable with `LoggerAdapterBuilder::bun_executable(command)` when needed.
+`groupPrefix` prepends a package or application namespace unless the group already starts with that prefix.
 
 ## Public API
 
 Entrypoints:
 
-- package root
-- `/browser`
-- `/bridge`
-- `/bridge/protocol`
+- `@trebired/logger-adapter`
+- `@trebired/logger-adapter/browser`
+- `@trebired/logger-adapter/bridge`
+- `@trebired/logger-adapter/bridge/protocol`
 
-The normalized TypeScript logger exposes `info`, `warn`, `error`, `fail`, and `log`.
+The normalized logger exposes `info`, `warn`, `error`, `fail`, and `log`.
 
-## Scope
+## CLI
 
-This package adapts logger calls and owns the native bridge. It does not replace the JavaScript logger package, define retention policy, rotate files, or make application-specific logging decisions.
+```sh
+bunx logger-adapter-bridge
+```
+
+The bridge command reads protocol messages from stdin and writes JSON results to stdout.
+
+## What It Does Not Do
+
+This package does not:
+
+- Replace `@trebired/logger`.
+- Define retention or rotation policy.
+- Own application log directory choices.
+- Invent application-specific logging groups.
