@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.18
+
+- Updated the internal logger alias dependency and optional logger peer to the current logger release so consumers do not retain older nested result/logger-adapter installs.
+
 ## 0.4.17
 
 - Made package initialization logging idempotent per package source and logger/adapter sink, so packages with multiple entrypoints no longer emit duplicate `initialized` events.
