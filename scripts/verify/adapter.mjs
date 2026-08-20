@@ -60,6 +60,33 @@ function verifyBrowserPrefix() {
   ]);
 }
 
+function verifyInitializedDedupe() {
+  const capture = collectEvents();
+  logPackageInitialized({
+      fallback: "noop",
+      group: "trebired.git-host",
+      logger: capture.logger,
+      source: "@trebired/git-host",
+  });
+  logPackageInitialized({
+      fallback: "noop",
+      group: "trebired.git-host.forge",
+      logger: capture.logger,
+      source: "@trebired/git-host",
+  });
+  logPackageInitialized({
+      fallback: "noop",
+      group: "trebired.git-host.forge.api",
+      logger: capture.logger,
+      source: "@trebired/git-host",
+  });
+
+  assert.deepEqual(capture.events.map((event) => event.group), [
+      "trebired.git-host.initialize",
+  ]);
+}
+
 verifyServerPrefix();
 verifyBrowserPrefix();
+verifyInitializedDedupe();
 console.log("Adapter verification succeeded.");

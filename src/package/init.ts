@@ -5,6 +5,7 @@ import { fallbackLevel, fallbackLogger } from "#op66hzcikawq";
 import type { LoggerAdapterResolveOptions } from "#903rjwb52opy";
 import { applyInitializationGroupPrefix } from "#br5q34hru3ot";
 import { buildPackageLogGroup, PACKAGE_ORGANIZATION_NAME } from "#wp3l0xg0zcet";
+import { shouldLogPackageInitialized } from "./init-state.js";
 
 type LoggerAdapterInitializationOptions = LoggerAdapterResolveOptions& {
   group?: string;
@@ -27,6 +28,8 @@ function logPackageInitialized(options: LoggerAdapterInitializationOptions): voi
   const source = options.adapter
   ? options.logger
   : options.logger ?? resolveConfiguredDefaultLogger(options.defaultLogger, options.source);
+  if (!shouldLogPackageInitialized(options, source)) return;
+
   const group = buildInitializationGroup(options.source, options.group, options.groupPrefix);
   const message = `${options.source} initialized`;
   const event = buildLogEvent("success", group, message);

@@ -8,6 +8,7 @@
   "#7mxzrf089t73": "./src/bridge/server.ts",
   "#903rjwb52opy": "./src/types.ts",
   "#a7gp3lc9ei06": "./src/browser/resolve-logger.ts",
+  "#anwxg5mi2ml0": "./src/package/init-state.ts",
   "#baraacncu5kl": "./src/default-logger.ts",
   "#bdzwd5cj4ola": "./scripts/verify/adapter.mjs",
   "#br5q34hru3ot": "./src/group.ts",
