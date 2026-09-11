@@ -2,6 +2,9 @@ import assert from "node:assert/strict";
 
 import { logPackageInitialized, resolveLogger } from "../../dist/index.js";
 import { logPackageInitialized as logBrowserPackageInitialized, resolveLogger as resolveBrowserLogger } from "../../dist/browser/index.js";
+import { createLog } from "@package/logger";
+
+const log = createLog({ console: true, save: false });
 
 function collectEvents() {
   const events = [];
@@ -89,4 +92,4 @@ function verifyInitializedDedupe() {
 verifyServerPrefix();
 verifyBrowserPrefix();
 verifyInitializedDedupe();
-console.log("Adapter verification succeeded.");
+log.info("verify.adapter", "Adapter verification succeeded.");

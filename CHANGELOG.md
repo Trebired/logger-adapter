@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.2
+
+- Changed the verification scripts and examples to print through `@trebired/logger` instead of `console` and `process.stdout`.
+- Changed `examples/dummy.ts` to resolve the default logger instead of passing `console` as the logger.
+
 ## 0.5.1
 
 - Updated the `@trebired/utils` dependency range to `^0.9.0`, keeping every `@trebired` package on one range so a project cannot resolve two copies.

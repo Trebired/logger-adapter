@@ -2,7 +2,6 @@ import { resolveLogger } from "#zphq3sccnajd";
 
 function runPackageCompatibleDemo() {
   const log = resolveLogger({
-      logger: console as any,
       source: "adapter-demo",
   });
 
@@ -27,7 +26,7 @@ function runCustomShapeDemo() {
   });
 
   log.fail("service.config", "missing value");
-  process.stdout.write(`${JSON.stringify(rows, null, 2)}\n`);
+  resolveLogger({ source: "adapter-demo" }).info("service.config", "captured rows", { rows });
 }
 
 runPackageCompatibleDemo();

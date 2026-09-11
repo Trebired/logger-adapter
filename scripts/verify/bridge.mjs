@@ -3,6 +3,9 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { spawn } from "node:child_process";
 import { fileURLToPath } from "node:url";
+import { createLog } from "@package/logger";
+
+const log = createLog({ console: true, save: false });
 
 const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const tempRoot = path.join(rootDir, ".tmp", "verify-bridge");
@@ -13,7 +16,7 @@ async function main() {
   await fs.mkdir(tempRoot, { recursive: true });
   await verifyBridgeRoundTrip();
   await verifyBridgeErrors();
-  console.log("Bridge verification succeeded.");
+  log.info("verify.bridge", "Bridge verification succeeded.");
 }
 
 async function verifyBridgeRoundTrip() {
