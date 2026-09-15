@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.6.0
+
+- Moved to `@trebired/logger` 3.0.0. The `@package/logger` dependency range is now `^3.0.0` and the optional `@trebired/logger` peer range is `^3.0.0` instead of any version. The adapter only uses `createLog()` and `loadCachedConfigSync()`, which are unchanged. Logger 3.0.0 stores saved logs in SQLite and runs on Bun only on the server.
+- Updated the shipped `.trebired/logger/config.ts` `forVersion` to `3.0.0`. The logger checks `forVersion` by major and minor version, so under `@trebired/logger` 3.0 the old `2.7.0` value would fail the check and this package's log prefix would be dropped.
+
 ## 0.5.2
 
 - Changed the verification scripts and examples to print through `@trebired/logger` instead of `console` and `process.stdout`.

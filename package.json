@@ -8,7 +8,7 @@
     }
   },
   "name": "@trebired/logger-adapter",
-  "version": "0.5.2",
+  "version": "0.6.0",
   "description": "Generic structured logger adapter with server, browser, bridge, and Rust client support.",
   "type": "module",
   "private": false,
@@ -66,7 +66,7 @@
     "verify:rust": "bun ./scripts/verify/rust.mjs"
   },
   "dependencies": {
-    "@package/logger": "npm:@trebired/logger@^2.7.0",
+    "@package/logger": "npm:@trebired/logger@^3.0.0",
     "@trebired/utils": "^0.9.3"
   },
   "devDependencies": {
@@ -77,7 +77,7 @@
     "typescript": "^6.0.3"
   },
   "peerDependencies": {
-    "@trebired/logger": ""
+    "@trebired/logger": "^3.0.0"
   },
   "peerDependenciesMeta": {
     "@trebired/logger": {
