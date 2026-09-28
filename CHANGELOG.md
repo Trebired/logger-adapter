@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.7.0
+
+- Added `logPackageAttribution` beside `logPackageInitialized` on the browser entry. It follows the same emission chain — adapter, then a level method, then an event sink, then the console fallback — and the same once-per-logger dedup, but takes the message and metadata from the caller and emits at `info` rather than announcing an initialization. A package that wants to say something about itself once per document no longer has to choose between the initialization wording and writing to `console` itself.
+- `shouldLogPackageInitialized` takes an optional dedup scope, so an attribution line and an initialization line from the same source no longer suppress each other.
+
 ## 0.6.0
 
 - Moved to `@trebired/logger` 3.0.0. The `@package/logger` dependency range is now `^3.0.0` and the optional `@trebired/logger` peer range is `^3.0.0` instead of any version. The adapter only uses `createLog()` and `loadCachedConfigSync()`, which are unchanged. Logger 3.0.0 stores saved logs in SQLite and runs on Bun only on the server.

@@ -1,6 +1,9 @@
+export { logPackageAttribution } from "./attribution.js";
 export { logPackageInitialized } from "./init.js";
 export { resolveBrowserGlobalLogger } from "./default-logger.js";
 export { resolveLogger } from "./resolve-logger.js";
+
+export type { LoggerAdapterAttributionOptions } from "./attribution.js";
 
 export type {
   LoggerAdapterDefaultLogger,

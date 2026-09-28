@@ -3,8 +3,10 @@ import type { LoggerAdapterResolveOptions } from "#903rjwb52opy";
 const primitiveInitializationKeys = new Set<string>();
 const objectInitializationKeys = new WeakMap<object, Set<string>>();
 
-function normalizeSourceKey(source: unknown): string {
-  return String(source || "").trim() || "unknown";
+function normalizeSourceKey(source: unknown, scope?: string): string {
+  const key = String(source || "").trim() || "unknown";
+  const suffix = String(scope || "").trim();
+  return suffix ? `${key}::${suffix}` : key;
 }
 
 function initializationIdentity(
@@ -20,9 +22,10 @@ function initializationIdentity(
 
 function fallbackInitializationKey(
   options: Pick<LoggerAdapterResolveOptions, "fallback"|"source">,
+  scope?: string,
 ): string {
   const fallback = options.fallback ?? "console";
-  return fallback === "noop" ? "" : `${normalizeSourceKey(options.source)}::fallback:${fallback}`;
+  return fallback === "noop" ? "" : `${normalizeSourceKey(options.source, scope)}::fallback:${fallback}`;
 }
 
 function markObjectInitialized(identity: object, sourceKey: string): boolean {
@@ -36,12 +39,13 @@ function markObjectInitialized(identity: object, sourceKey: string): boolean {
 function shouldLogPackageInitialized(
   options: Pick<LoggerAdapterResolveOptions, "adapter"|"fallback"|"source">,
   logger: unknown,
+  scope?: string,
 ): boolean {
-  const sourceKey = normalizeSourceKey(options.source);
+  const sourceKey = normalizeSourceKey(options.source, scope);
   const identity = initializationIdentity(options, logger);
   if (identity) return markObjectInitialized(identity, sourceKey);
 
-  const fallbackKey = fallbackInitializationKey(options);
+  const fallbackKey = fallbackInitializationKey(options, scope);
   if (!fallbackKey) return true;
   if (primitiveInitializationKeys.has(fallbackKey)) return false;
   primitiveInitializationKeys.add(fallbackKey);

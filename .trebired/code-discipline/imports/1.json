@@ -25,6 +25,7 @@
   "#op66hzcikawq": "./src/fallback.ts",
   "#ry1slsxwb0om": "./src/resolve/logger.ts",
   "#v2c2c77arc2r": "./.trebired/logger/config.ts",
+  "#w08g935r5ts8": "./src/browser/attribution.ts",
   "#wp3l0xg0zcet": "./src/package/metadata.ts",
   "#wq20zg0x2bl1": "./src/frontend/js/utils/text.ts",
   "#zphq3sccnajd": "./src/index.ts"

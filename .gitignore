@@ -14,7 +14,7 @@ rust/logger-adapter/target/
 .env
 .env.*
 !.env.example
-.trebired/code-discipline/generated/
+.trebired/code-discipline/generated/reports/
 .tmp/
 
 cd-report-*.txt
