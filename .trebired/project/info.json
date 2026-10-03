@@ -1,0 +1,11 @@
+{
+  "schema": 1,
+  "category": "package",
+  "subcategory": "runtime",
+  "status": "active",
+  "npm": "@trebired/logger-adapter",
+  "description": {
+    "en": "The one logging interface packages depend on, with server and browser backends.",
+    "cs": "Jediné logovací rozhraní, na kterém balíčky závisí, se serverovým i prohlížečovým backendem."
+  }
+}
