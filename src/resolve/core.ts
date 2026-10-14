@@ -1,3 +1,5 @@
+import { callerGuard, claimsNamespace } from "./../guard/namespace.js";
+import { resolveCallerPackageRoot } from "./../config/caller.js";
 import { callEventSink, callLevelMethod } from "#g37d0m22fyfl";
 import { buildLogEvent } from "#h7r5guzmkuvo";
 import { fallbackLogger } from "#op66hzcikawq";
@@ -40,6 +42,7 @@ function createLoggerResolver(
     level: LoggerAdapterLevel,
     fallback: LoggerAdapterLogMethod,
     groupPrefix: false | string,
+    guard: (claim: { group: string; source?: string }) => void,
   ): LoggerAdapterLogMethod {
     const source = options.adapter
     ? options.logger
@@ -47,6 +50,7 @@ function createLoggerResolver(
 
     return (group: string, message: string, metadata?: unknown) => {
       const resolvedGroup = applyGroupPrefix(group, groupPrefix);
+      guard({ group: resolvedGroup, source: options.source });
       const event = buildLogEvent(level, resolvedGroup, message, metadata);
 
       if (typeof options.adapter === "function") {
@@ -63,15 +67,20 @@ function createLoggerResolver(
   return (options: LoggerAdapterResolveOptions): NormalizedLoggerAdapter => {
     const fallbackMode = options.fallback ?? "console";
     const groupPrefix = resolveGroupPrefix(options, resolveConfiguredGroupPrefix);
+    const guard = callerGuard(resolveCallerPackageRoot(() => false));
+
+    if (typeof groupPrefix === "string" && claimsNamespace(groupPrefix)) {
+      guard({ group: groupPrefix, source: options.source });
+    }
 
     return {
-      info: resolveLogMethod(options, "info", fallbackLogger(fallbackMode, "info"), groupPrefix),
-      warn: resolveLogMethod(options, "warn", fallbackLogger(fallbackMode, "warn"), groupPrefix),
-      error: resolveLogMethod(options, "error", fallbackLogger(fallbackMode, "error"), groupPrefix),
-      fail: resolveLogMethod(options, "fail", fallbackLogger(fallbackMode, "error"), groupPrefix),
+      info: resolveLogMethod(options, "info", fallbackLogger(fallbackMode, "info"), groupPrefix, guard),
+      warn: resolveLogMethod(options, "warn", fallbackLogger(fallbackMode, "warn"), groupPrefix, guard),
+      error: resolveLogMethod(options, "error", fallbackLogger(fallbackMode, "error"), groupPrefix, guard),
+      fail: resolveLogMethod(options, "fail", fallbackLogger(fallbackMode, "error"), groupPrefix, guard),
       log(level, group, message, metadata) {
         const fallbackLevel = level === "warn" ? "warn" : level === "error" || level === "fail" ? "error" : "info";
-        return resolveLogMethod(options, level, fallbackLogger(fallbackMode, fallbackLevel), groupPrefix)(group, message, metadata);
+        return resolveLogMethod(options, level, fallbackLogger(fallbackMode, fallbackLevel), groupPrefix, guard)(group, message, metadata);
       },
     };
   };

@@ -50,6 +50,29 @@ The package resolves the logger package at runtime. Applications that use the br
 
 `groupPrefix` prepends a package or application namespace unless the group already starts with that prefix.
 
+## The Organization Namespace
+
+The log group that starts with the organization's own name belongs to the organization's
+packages. Importing this package installs a guard with `@trebired/logger` and checks every
+claim the adapter routes itself, so a package that is not published under the organization's
+npm scope cannot log under that namespace.
+
+The rule is one question: does the calling package's own `package.json` name start with the
+scope. Nothing else qualifies, including an application that declares the organization in its
+own metadata, because the namespace belongs to the packages rather than to the products built
+with them. A refusal throws at the call that made it, naming the package, its path and the
+group it claimed.
+
+The claim is read where the group is final, so a group assembled at runtime from pieces is
+treated exactly like a literal one. The verdict is cached per calling package, which leaves a
+boolean and one string test per record afterwards.
+
+What this is and is not: the npm scope is owned on the registry, so nobody else can publish
+under it, and a package that writes the name into its own `package.json` without publishing is
+making a claim in a file anyone can read. Code already running in the same process can patch
+the logger, so this is attribution rather than a sandbox. `TREBIRED_LOG_GUARD=off` turns the
+guard off for an incident, with the weakening that implies.
+
 ## Public API
 
 Entrypoints:

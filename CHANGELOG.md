@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.8.0
+
+- The organization's log namespace is enforced at runtime. The adapter installs a guard with `@trebired/logger` on import and checks every claim it routes itself, so a package that is not published under the organization's npm scope cannot log under `<organization>.…`. The claim is read after the group is final, which means a group assembled at runtime from pieces is treated exactly like a literal one, and a refusal throws at the call that made it, naming the package, its path and the group.
+
+- The rule is one question: does the calling package's own `package.json` name start with the organization's scope. An application that merely declares the organization does not qualify, because the namespace belongs to the packages. The verdict is cached per calling package, so the cost after the first claim is a boolean and one string test, and `TREBIRED_LOG_GUARD=off` exists for an incident.
+
+- `resolveCallerPackageRoot` is exported from the caller resolution and takes a predicate for the frames to step over, so a claim made through any copy of `@trebired/logger` is attributed to the package that made it rather than to the logger it passed through. A logging package announcing itself, such as the logger's own initialization line, is read as its own and left alone.
+
 ## 0.7.0
 
 - Added `logPackageAttribution` beside `logPackageInitialized` on the browser entry. It follows the same emission chain — adapter, then a level method, then an event sink, then the console fallback — and the same once-per-logger dedup, but takes the message and metadata from the caller and emits at `info` rather than announcing an initialization. A package that wants to say something about itself once per document no longer has to choose between the initialization wording and writing to `console` itself.

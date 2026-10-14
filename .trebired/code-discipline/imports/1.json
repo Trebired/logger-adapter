@@ -12,6 +12,8 @@
   "#baraacncu5kl": "./src/default-logger.ts",
   "#bdzwd5cj4ola": "./scripts/verify/adapter.mjs",
   "#br5q34hru3ot": "./src/group.ts",
+  "#c7rpr2xcotyz": "./src/guard/namespace.ts",
+  "#e9lt7j8tjayb": "./src/guard/install.ts",
   "#eaywjdf9s74m": "./scripts/verify/rust.mjs",
   "#fcoyul7ipnkx": "./src/package/init.ts",
   "#g37d0m22fyfl": "./src/emit.ts",
@@ -28,5 +30,7 @@
   "#w08g935r5ts8": "./src/browser/attribution.ts",
   "#wp3l0xg0zcet": "./src/package/metadata.ts",
   "#wq20zg0x2bl1": "./src/frontend/js/utils/text.ts",
+  "#y32csj8wgh8i": "./scripts/verify/namespace.mjs",
+  "#yjx36zokakwq": "./src/guard/owner.ts",
   "#zphq3sccnajd": "./src/index.ts"
 }

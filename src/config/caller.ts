@@ -26,13 +26,20 @@ function findPackageRoot(startPath: string): string {
 }
 
 const ADAPTER_PACKAGE_ROOT = findPackageRoot(fileURLToPath(import.meta.url));
+const LOGGER_PACKAGE_ROOT = resolveLoggerPackageRoot();
+
+function resolveLoggerPackageRoot(): string {
+  if (!ADAPTER_PACKAGE_ROOT) return "";
+  const candidate = path.join(path.dirname(ADAPTER_PACKAGE_ROOT), "logger");
+  return fs.existsSync(path.join(candidate, "package.json")) ? candidate : "";
+}
+
+function isWithin(filePath: string, root: string): boolean {
+  return Boolean(root && (filePath === root || filePath.startsWith(`${root}${path.sep}`)));
+}
 
 function isAdapterInternalFile(filePath: string): boolean {
-  return Boolean(
-    ADAPTER_PACKAGE_ROOT &&
-      (filePath === ADAPTER_PACKAGE_ROOT ||
-        filePath.startsWith(`${ADAPTER_PACKAGE_ROOT}${path.sep}`)),
-  );
+  return isWithin(filePath, ADAPTER_PACKAGE_ROOT) || isWithin(filePath, LOGGER_PACKAGE_ROOT);
 }
 
 function resolveCallerConfigStart(): string {
@@ -55,4 +62,17 @@ function resolveCallerLoggerPrefix(): false | string {
   }
 }
 
-export { resolveCallerLoggerPrefix };
+function resolveCallerPackageRoot(isSkipped: (packageRoot: string) => boolean): string {
+  const stack = new Error().stack || "";
+  for (const line of stack.split("\n")) {
+    const filePath = filePathFromStackLine(line);
+    if (!filePath || isAdapterInternalFile(filePath)) continue;
+    const packageRoot = findPackageRoot(filePath) || path.dirname(filePath);
+    if (isSkipped(packageRoot)) continue;
+    return packageRoot;
+  }
+
+  return process.cwd();
+}
+
+export { resolveCallerLoggerPrefix, resolveCallerPackageRoot };

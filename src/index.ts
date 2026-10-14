@@ -1,4 +1,7 @@
+import { installLogNamespaceGuard } from "./guard/install.js";
+
 export { logPackageInitialized } from "./package/init.js";
+export { installLogNamespaceGuard } from "./guard/install.js";
 export { resolveLogger } from "./resolve/logger.js";
 
 export type {
@@ -17,3 +20,5 @@ export type {
   LoggerAdapterWriter,
   NormalizedLoggerAdapter,
 } from "./types.js";
+
+installLogNamespaceGuard();
