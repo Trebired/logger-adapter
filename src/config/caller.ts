@@ -56,7 +56,8 @@ function resolveCallerConfigStart(): string {
 
 function resolveCallerLoggerPrefix(): false | string {
   try {
-    return loadCachedConfigSync(resolveCallerConfigStart()).prefix;
+    const callerRoot = resolveCallerConfigStart();
+    return loadCachedConfigSync(callerRoot, callerRoot).prefix;
   } catch {
     return false;
   }

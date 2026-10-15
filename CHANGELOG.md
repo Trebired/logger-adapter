@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.1
+
+- A package without a logger config of its own no longer inherits one from a directory above it. The caller's own package root is now the boundary of the search, so a package nested inside another repository, which is what a packed consumer smoke test is, keeps its own namespace instead of borrowing the one it happens to sit under. Requires `@trebired/logger` 3.0.3, which takes the boundary.
+
 ## 0.8.0
 
 - The organization's log namespace is enforced at runtime. The adapter installs a guard with `@trebired/logger` on import and checks every claim it routes itself, so a package that is not published under the organization's npm scope cannot log under `<organization>.…`. The claim is read after the group is final, which means a group assembled at runtime from pieces is treated exactly like a literal one, and a refusal throws at the call that made it, naming the package, its path and the group.
