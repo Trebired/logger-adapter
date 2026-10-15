@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.2
+
+- The browser entry carries no namespace guard and no filesystem code. The shared resolver takes the guard as a parameter, the server binding supplies it, and the browser binding leaves it out, so a browser bundle of this package no longer pulls the node-only parts of `@trebired/utils` in through the resolver.
+
 ## 0.8.1
 
 - A package without a logger config of its own no longer inherits one from a directory above it. The caller's own package root is now the boundary of the search, so a package nested inside another repository, which is what a packed consumer smoke test is, keeps its own namespace instead of borrowing the one it happens to sit under. Requires `@trebired/logger` 3.0.3, which takes the boundary.

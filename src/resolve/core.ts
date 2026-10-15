@@ -1,5 +1,3 @@
-import { callerGuard, claimsNamespace } from "./../guard/namespace.js";
-import { resolveCallerPackageRoot } from "./../config/caller.js";
 import { callEventSink, callLevelMethod } from "#g37d0m22fyfl";
 import { buildLogEvent } from "#h7r5guzmkuvo";
 import { fallbackLogger } from "#op66hzcikawq";
@@ -20,6 +18,14 @@ type DefaultLoggerResolver = (
 
 type GroupPrefixResolver = (options: LoggerAdapterResolveOptions) => false | string;
 
+type ClaimGuard = (claim: { group: string; source?: string }) => void;
+
+type ClaimGuardFactory = () => ClaimGuard;
+
+function noClaimGuard(): ClaimGuard {
+  return () => undefined;
+}
+
 function resolveGroupPrefix(
   options: LoggerAdapterResolveOptions,
   resolveConfiguredGroupPrefix: GroupPrefixResolver,
@@ -36,13 +42,14 @@ function resolveGroupPrefix(
 function createLoggerResolver(
   resolveDefaultLogger: DefaultLoggerResolver,
   resolveConfiguredGroupPrefix: GroupPrefixResolver = () => false,
+  createClaimGuard: ClaimGuardFactory = noClaimGuard,
 ) {
   function resolveLogMethod(
     options: LoggerAdapterResolveOptions,
     level: LoggerAdapterLevel,
     fallback: LoggerAdapterLogMethod,
     groupPrefix: false | string,
-    guard: (claim: { group: string; source?: string }) => void,
+    guard: ClaimGuard,
   ): LoggerAdapterLogMethod {
     const source = options.adapter
     ? options.logger
@@ -67,11 +74,9 @@ function createLoggerResolver(
   return (options: LoggerAdapterResolveOptions): NormalizedLoggerAdapter => {
     const fallbackMode = options.fallback ?? "console";
     const groupPrefix = resolveGroupPrefix(options, resolveConfiguredGroupPrefix);
-    const guard = callerGuard(resolveCallerPackageRoot(() => false));
+    const guard = createClaimGuard();
 
-    if (typeof groupPrefix === "string" && claimsNamespace(groupPrefix)) {
-      guard({ group: groupPrefix, source: options.source });
-    }
+    if (typeof groupPrefix === "string") guard({ group: groupPrefix, source: options.source });
 
     return {
       info: resolveLogMethod(options, "info", fallbackLogger(fallbackMode, "info"), groupPrefix, guard),
@@ -87,3 +92,4 @@ function createLoggerResolver(
 }
 
 export { createLoggerResolver };
+export type { ClaimGuard, ClaimGuardFactory };
