@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.8.3
+
+- Raised the dependency ranges to the current releases: `@trebired/utils` to `^0.9.7`.
+- Moved the repository's own Code Discipline config to `@trebired/code-discipline` 8 and the named preset `@trebired/configs/code-discipline/preset_01` from `@trebired/configs` 0.6.0.
+
 ## 0.8.2
 
 - The browser entry carries no namespace guard and no filesystem code. The shared resolver takes the guard as a parameter, the server binding supplies it, and the browser binding leaves it out, so a browser bundle of this package no longer pulls the node-only parts of `@trebired/utils` in through the resolver.
