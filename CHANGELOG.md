@@ -1,10 +1,11 @@
 # Changelog
 
-## 0.8.4
+## 0.8.5
 
 - A claim the adapter has already checked keeps its owner when the logger it is handed forwards it. The adapter checks a group against the package that resolved the logger, then approves that group for the one synchronous call it makes into the logger, in a registry every copy of the adapter shares. The guard in `@trebired/logger` honours the approval, so a package logging through an application's own forwarding logger, one that looks the real logger up at call time, is no longer refused in the application's name. An application that claims the namespace itself is still refused at its own frame.
-- `logPackageInitialized` checks the announcing package the same way before it forwards.
+- `logPackageInitialized` approves the announcement the same way when the announcing package belongs to the organization. It refuses nothing new: an application announcing itself, whose group the adapter builds under the organization's namespace, logs as before.
 - The approval registry carries no filesystem code, so the browser entry still bundles without the node-only parts of `@trebired/utils`.
+- 0.8.4 was tagged but never published: its packed consumer check caught `logPackageInitialized` refusing an application's own announcement. This release carries all of 0.8.4 without that refusal.
 
 ## 0.8.3
 
