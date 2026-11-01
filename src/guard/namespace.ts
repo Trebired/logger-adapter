@@ -1,4 +1,5 @@
 import { resolveCallerPackageRoot } from "./../config/caller.js";
+import { claimApproved } from "./approved.js";
 import { PACKAGE_ORGANIZATION_NAME } from "./../package/metadata.js";
 import { packageOwner } from "./owner.js";
 
@@ -45,10 +46,11 @@ function assertNamespaceClaim(claim: NamespaceClaim, packageRoot: string): void 
   refuse(claim, packageRoot, owner.name);
 }
 
-function callerGuard(packageRoot: string): (claim: NamespaceClaim) => void {
+function callerGuard(packageRoot: string): (claim: NamespaceClaim) => boolean {
   const owner = packageOwner(packageRoot, reservedNamespace());
   return (claim) => {
-    if (owner.owned || guardDisabled() || !claimsNamespace(claim.group)) return;
+    if (guardDisabled() || !claimsNamespace(claim.group)) return false;
+    if (owner.owned || claimApproved(claim.group)) return true;
     refuse(claim, packageRoot, owner.name);
   };
 }
@@ -69,7 +71,7 @@ function announcesItself(claim: NamespaceClaim, packageName: string): boolean {
 }
 
 function checkLogGroupClaim(claim: NamespaceClaim): void {
-  if (guardDisabled() || !claimsNamespace(claim.group)) return;
+  if (guardDisabled() || !claimsNamespace(claim.group) || claimApproved(claim.group)) return;
   const reserved = reservedNamespace();
   const immediateRoot = resolveCallerPackageRoot(() => false);
   if (announcesItself(claim, packageOwner(immediateRoot, reserved).name)) return;

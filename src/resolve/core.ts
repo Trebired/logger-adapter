@@ -2,6 +2,7 @@ import { callEventSink, callLevelMethod } from "#g37d0m22fyfl";
 import { buildLogEvent } from "#h7r5guzmkuvo";
 import { fallbackLogger } from "#op66hzcikawq";
 import { applyGroupPrefix } from "#br5q34hru3ot";
+import { withApprovedClaim } from "./../guard/approved.js";
 import type {
   LoggerAdapterDefaultLogger,
   LoggerAdapterLevel,
@@ -18,12 +19,12 @@ type DefaultLoggerResolver = (
 
 type GroupPrefixResolver = (options: LoggerAdapterResolveOptions) => false | string;
 
-type ClaimGuard = (claim: { group: string; source?: string }) => void;
+type ClaimGuard = (claim: { group: string; source?: string }) => boolean;
 
 type ClaimGuardFactory = () => ClaimGuard;
 
 function noClaimGuard(): ClaimGuard {
-  return () => undefined;
+  return () => false;
 }
 
 function resolveGroupPrefix(
@@ -57,17 +58,17 @@ function createLoggerResolver(
 
     return (group: string, message: string, metadata?: unknown) => {
       const resolvedGroup = applyGroupPrefix(group, groupPrefix);
-      guard({ group: resolvedGroup, source: options.source });
+      const approved = guard({ group: resolvedGroup, source: options.source });
       const event = buildLogEvent(level, resolvedGroup, message, metadata);
-
-      if (typeof options.adapter === "function") {
-        options.adapter(source, event);
-        return;
-      }
-
-      if (callLevelMethod(source, level, event)) return;
-      if (callEventSink(source, event)) return;
-      fallback(resolvedGroup, message, metadata);
+      withApprovedClaim(approved ? resolvedGroup : null, () => {
+          if (typeof options.adapter === "function") {
+            options.adapter(source, event);
+            return;
+          }
+          if (callLevelMethod(source, level, event)) return;
+          if (callEventSink(source, event)) return;
+          fallback(resolvedGroup, message, metadata);
+      });
     };
   }
 

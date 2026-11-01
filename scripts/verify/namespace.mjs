@@ -38,6 +38,28 @@ function throughLogger(group) {
   ].join("\n");
 }
 
+function throughForwarder(group, forwarderUrl) {
+  return [
+    `import { resolveLogger } from ${JSON.stringify(adapterUrl())};`,
+    `import { createLog } from ${JSON.stringify(loggerUrl())};`,
+    `import { forwardTo } from ${JSON.stringify(forwarderUrl)};`,
+    `const real = createLog({ console: false, prefix: false, save: false, source: "fixture" });`,
+    `const adapter = resolveLogger({ logger: forwardTo(real), source: "@${organization}/forwarded" });`,
+    `adapter.info(${JSON.stringify(group)}, "a line");`,
+    `console.log("reached the end");`,
+  ].join("\n");
+}
+
+const FORWARDER_SOURCE = [
+  "export function forwardTo(real) {",
+  "  return {",
+  "    error: (...args) => real.error(...args),",
+  "    info: (...args) => real.info(...args),",
+  "    warn: (...args) => real.warn(...args),",
+  "  };",
+  "}",
+].join("\n");
+
 async function writeFixture(root, manifest, body) {
   const dir = path.join(root, manifest.name.replace("@", "").replace("/", "-"));
   await fs.mkdir(dir, { recursive: true });
@@ -102,6 +124,13 @@ await expectAllowed(
   { name: `@${organization}/fixture` },
   throughAdapter(`${organization}.fixture`, false),
   "a package of the organization logs under the namespace",
+);
+const forwarder = await writeFixture(workDir, { name: "forwarding-app" }, FORWARDER_SOURCE);
+await expectAllowed(
+  workDir,
+  { name: `@${organization}/forwarded` },
+  throughForwarder(`${organization}.forwarded.db`, pathToFileURL(forwarder).href),
+  "a package of the organization keeps its claim through an application's forwarding logger",
 );
 await expectAllowed(
   workDir,

@@ -52,6 +52,9 @@
       "#fcoyul7ipnkx": [
         "../../../src/package/init.ts"
       ],
+      "#fwjeuawo1xx9": [
+        "../../../src/guard/approved.ts"
+      ],
       "#g37d0m22fyfl": [
         "../../../src/emit.ts"
       ],

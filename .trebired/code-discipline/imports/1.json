@@ -16,6 +16,7 @@
   "#e9lt7j8tjayb": "./src/guard/install.ts",
   "#eaywjdf9s74m": "./scripts/verify/rust.mjs",
   "#fcoyul7ipnkx": "./src/package/init.ts",
+  "#fwjeuawo1xx9": "./src/guard/approved.ts",
   "#g37d0m22fyfl": "./src/emit.ts",
   "#g6gngnw2nynq": "./scripts/verify/pack.mjs",
   "#h41vx964azx4": "./scripts/prepare-dist.mjs",

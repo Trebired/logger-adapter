@@ -5,6 +5,9 @@ import { fallbackLevel, fallbackLogger } from "#op66hzcikawq";
 import type { LoggerAdapterResolveOptions } from "#903rjwb52opy";
 import { applyInitializationGroupPrefix } from "#br5q34hru3ot";
 import { buildPackageLogGroup, PACKAGE_ORGANIZATION_NAME } from "#wp3l0xg0zcet";
+import { resolveCallerPackageRoot } from "./../config/caller.js";
+import { withApprovedClaim } from "./../guard/approved.js";
+import { callerGuard } from "./../guard/namespace.js";
 import { shouldLogPackageInitialized } from "./init-state.js";
 
 type LoggerAdapterInitializationOptions = LoggerAdapterResolveOptions& {
@@ -33,17 +36,17 @@ function logPackageInitialized(options: LoggerAdapterInitializationOptions): voi
   const group = buildInitializationGroup(options.source, options.group, options.groupPrefix);
   const message = `${options.source} initialized`;
   const event = buildLogEvent("success", group, message);
-
-  if (typeof options.adapter === "function") {
-    options.adapter(source, event);
-    return;
-  }
-
-  if (callLevelMethod(source, "success", event)) return;
-  if (callEventSink(source, event)) return;
-
-  const fallback = fallbackLogger(options.fallback ?? "console", fallbackLevel("success"));
-  fallback(group, message);
+  const approved = callerGuard(resolveCallerPackageRoot(() => false))({ group, source: options.source });
+  withApprovedClaim(approved ? group : null, () => {
+      if (typeof options.adapter === "function") {
+        options.adapter(source, event);
+        return;
+      }
+      if (callLevelMethod(source, "success", event)) return;
+      if (callEventSink(source, event)) return;
+      const fallback = fallbackLogger(options.fallback ?? "console", fallbackLevel("success"));
+      fallback(group, message);
+  });
 }
 
 export { logPackageInitialized };
