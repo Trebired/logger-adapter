@@ -55,6 +55,11 @@ function callerGuard(packageRoot: string): (claim: NamespaceClaim) => boolean {
   };
 }
 
+function callerOwnsClaim(packageRoot: string, claim: NamespaceClaim): boolean {
+  if (guardDisabled() || !claimsNamespace(claim.group)) return false;
+  return packageOwner(packageRoot, reservedNamespace()).owned;
+}
+
 function loggingPackageNames(): Set<string> {
   const reserved = reservedNamespace();
   return new Set([`@${reserved}/logger`, `@${reserved}/logger-adapter`]);
@@ -79,5 +84,5 @@ function checkLogGroupClaim(claim: NamespaceClaim): void {
   assertNamespaceClaim(claim, resolveCallerPackageRoot((root) => skipped.has(packageOwner(root, reserved).name)));
 }
 
-export { assertNamespaceClaim, callerGuard, checkLogGroupClaim, claimsNamespace, reservedNamespace };
+export { assertNamespaceClaim, callerGuard, callerOwnsClaim, checkLogGroupClaim, claimsNamespace, reservedNamespace };
 export type { NamespaceClaim };
