@@ -125,7 +125,9 @@ await expectAllowed(
   throughAdapter(`${organization}.fixture`, false),
   "a package of the organization logs under the namespace",
 );
+
 const forwarder = await writeFixture(workDir, { name: "forwarding-app" }, FORWARDER_SOURCE);
+
 await expectAllowed(
   workDir,
   { name: `@${organization}/forwarded` },
